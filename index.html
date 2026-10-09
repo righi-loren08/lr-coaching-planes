@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plan de entrenamiento - Prototipo</title>
+<style>
+:root{
+  --bg:#f5f4f1; --card:#ffffff; --fg:#1d2327; --muted:#5d676d; --line:#dcdad3;
+  --accent:#0f6b5c; --accent-fg:#ffffff; --soft:#e4efec; --warn:#fff4d6;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#14191b; --card:#1c2326; --fg:#e8ecec; --muted:#9aa6aa; --line:#2c373b;
+    --accent:#4fc0a8; --accent-fg:#0b1412; --soft:#1e3330; --warn:#3a3217;
+    color-scheme: dark;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:640px;margin:0 auto;padding:20px 16px 48px}
+h1{font-size:1.5rem;line-height:1.2;margin:0 0 4px;text-wrap:balance}
+h2{font-size:1.1rem;margin:28px 0 10px}
+.sub{color:var(--muted);margin:0 0 16px}
+.proto{background:var(--warn);border-radius:8px;padding:10px 12px;font-size:.9rem;margin:0 0 20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin:0 0 14px}
+.warm ol{margin:8px 0 0;padding-left:20px}
+.warm li{margin:4px 0}
+.ex h3{margin:0 0 6px;font-size:1.05rem}
+.meta{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
+.meta div{background:var(--soft);border-radius:8px;padding:8px;text-align:center;min-width:0}
+.meta b{display:block;font-size:1rem}
+.meta span{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.why{margin:8px 0}
+details{margin-top:10px;border-top:1px solid var(--line);padding-top:10px}
+summary{cursor:pointer;font-weight:600;color:var(--accent);min-height:36px}
+.how{margin:8px 0 12px}
+.video{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:8px;overflow:hidden}
+.video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.alt{font-size:.85rem;color:var(--muted);margin:6px 0 0}
+.alt a{color:var(--accent)}
+.note{font-size:.85rem;color:var(--muted)}
+</style>
+</head>
+<body>
+<main>
+  <h1>Tu plan de entrenamiento (V1)</h1>
+  <p class="sub">Preparado para [Nombre]. Primera revisión: [fecha, 4 semanas desde la entrega].</p>
+  <p class="proto"><b>Prototipo de prueba.</b> Un solo día de ejemplo, con datos tomados de la base de ejercicios. Los números de series y repeticiones son de muestra. Probá tocar play en cada ejercicio: el video tiene que reproducirse acá mismo, sin salir de la página.</p>
+
+  <h2>Martes: glúteos</h2>
+
+  <section class="card warm">
+    <b>Calentamiento del día</b>
+    <p class="note" style="margin:4px 0 0">2 vueltas de 10 repeticiones, despacio. Tiene que sentirse fácil.</p>
+    <ol>
+      <li>Puente de glúteos</li>
+      <li>Sentadilla sin peso</li>
+      <li>Clamshell con banda</li>
+      <li>Caminata lateral con banda</li>
+    </ol>
+  </section>
+
+  <article class="card ex">
+    <h3>1. Hip thrust con mancuerna</h3>
+    <div class="meta">
+      <div><b>4 × 8-12</b><span>Series</span></div>
+      <div><b>2 de reserva</b><span>Esfuerzo</span></div>
+      <div><b>2:00</b><span>Descanso</span></div>
+    </div>
+    <p class="why">Es la forma más fácil de empezar con carga. Va primero para que estés fresco.</p>
+    <details>
+      <summary>Cómo se hace y video</summary>
+      <p class="how">Igual que el hip thrust con barra, con la mancuerna apoyada sobre la cadera y sostenida con las manos.</p>
+      <div class="video"><iframe src="https://www.youtube-nocookie.com/embed/8RcEpMQ93Y8" title="Hip thrust con mancuerna" loading="lazy" allow="encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
+      <p class="alt">Si el video no se ve: <a href="https://www.youtube.com/watch?v=8RcEpMQ93Y8" target="_blank" rel="noopener">abrirlo en YouTube</a></p>
+    </details>
+  </article>
+
+  <article class="card ex">
+    <h3>2. Patada de glúteo en cuadrupedia</h3>
+    <div class="meta">
+      <div><b>3 × 12-15</b><span>Series</span></div>
+      <div><b>2 de reserva</b><span>Esfuerzo</span></div>
+      <div><b>1:30</b><span>Descanso</span></div>
+    </div>
+    <p class="why">Se hace sin equipo. Aísla el glúteo después del ejercicio pesado.</p>
+    <details>
+      <summary>Cómo se hace y video</summary>
+      <p class="how">En cuatro apoyos, levantá la pierna con la rodilla doblada hacia el techo, sin arquear la espalda, y bajá lento.</p>
+      <div class="video"><iframe src="https://www.youtube-nocookie.com/embed/rIebT2hwDJ8" title="Patada de glúteo en cuadrupedia" loading="lazy" allow="encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
+      <p class="alt">Si el video no se ve: <a href="https://www.youtube.com/shorts/rIebT2hwDJ8" target="_blank" rel="noopener">abrirlo en YouTube</a></p>
+    </details>
+  </article>
+
+  <article class="card ex">
+    <h3>3. Almeja con banda</h3>
+    <div class="meta">
+      <div><b>3 × 15-20</b><span>Series</span></div>
+      <div><b>1 a 2 de reserva</b><span>Esfuerzo</span></div>
+      <div><b>1:00</b><span>Descanso</span></div>
+    </div>
+    <p class="why">Suma resistencia a la almeja y trabaja el glúteo de los costados.</p>
+    <details>
+      <summary>Cómo se hace y video</summary>
+      <p class="how">Igual que la almeja, con la banda sobre las rodillas.</p>
+      <div class="video"><iframe src="https://www.youtube-nocookie.com/embed/oiRDE-Vu4to" title="Almeja con banda" loading="lazy" allow="encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
+      <p class="alt">Si el video no se ve: <a href="https://www.youtube.com/watch?v=oiRDE-Vu4to" target="_blank" rel="noopener">abrirlo en YouTube</a></p>
+    </details>
+  </article>
+
+  <article class="card ex">
+    <h3>4. Puente de glúteos</h3>
+    <div class="meta">
+      <div><b>2 × 15</b><span>Series</span></div>
+      <div><b>1 de reserva</b><span>Esfuerzo</span></div>
+      <div><b>1:00</b><span>Descanso</span></div>
+    </div>
+    <p class="why">Enseña a activar los glúteos. Cierra el día sin cargar mucho.</p>
+    <details>
+      <summary>Cómo se hace y video</summary>
+      <p class="how">Acostado boca arriba, con las rodillas dobladas y los pies apoyados. Subí la cadera hasta que el cuerpo quede derecho desde las rodillas hasta los hombros, apretá la cola un segundo y bajá despacio.</p>
+      <div class="video"><iframe src="https://www.youtube-nocookie.com/embed/vRHav61cjVU" title="Puente de glúteos" loading="lazy" allow="encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
+      <p class="alt">Si el video no se ve: <a href="https://www.youtube.com/shorts/vRHav61cjVU" target="_blank" rel="noopener">abrirlo en YouTube</a></p>
+    </details>
+  </article>
+
+  <p class="note">Si en tu celular los videos se reproducen acá mismo, el formato "plan como página web" sirve. Si aparece un cuadro negro o un error, avisame cuál ejercicio y qué mensaje muestra.</p>
+</main>
+</body>
+</html>
