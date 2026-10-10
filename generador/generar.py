@@ -25,25 +25,32 @@ main{max-width:640px;margin:0 auto;padding:20px 16px 48px}h1{font-family:var(--d
 details{margin-top:10px;border-top:1px solid var(--line);padding-top:10px}summary{cursor:pointer;font-weight:600;color:var(--accent);min-height:44px;display:flex;align-items:center}
 .how{margin:8px 0 12px}.cuidado{font-size:.9rem;color:var(--muted);margin:0 0 12px}.video{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:8px;overflow:hidden}
 .video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}.vbtn{min-height:44px;padding:0 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--fg);font:inherit;margin-top:8px}
-.sinvideo{font-size:.9rem;color:var(--muted)}.pie{font-size:.85rem;color:var(--muted);margin-top:24px}"""
+.altnota{font-size:.9rem;color:var(--muted);margin:8px 0}details.alt summary{font-weight:500;color:var(--muted);min-height:44px}.sinvideo{font-size:.9rem;color:var(--muted)}.pie{font-size:.85rem;color:var(--muted);margin-top:24px}"""
 
 JS = """(function(){var cur=null;document.querySelectorAll('details.ex-d').forEach(function(d){d.addEventListener('toggle',function(){var box=d.querySelector('.vslot');if(!box)return;
 if(d.open){document.querySelectorAll('.vslot').forEach(function(b){if(b!==box)b.innerHTML=''});
 if(!box.firstChild){var v=box.dataset.v,w=document.createElement('div');w.className='video';var f=document.createElement('iframe');f.src='https://www.youtube-nocookie.com/embed/'+v;f.title=box.dataset.t;f.allow='encrypted-media; picture-in-picture';f.allowFullscreen=true;f.referrerPolicy='strict-origin-when-cross-origin';w.appendChild(f);box.appendChild(w);
 var r=document.createElement('button');r.type='button';r.className='vbtn';r.textContent='↻ Recargar video';r.onclick=function(){f.src=f.src};box.appendChild(r)}}else{box.innerHTML=''}})})})();"""
 
-def tarjeta(i, it):
-    e = EJ[it['id']]
+def cuerpo(e):
     vid = yt(e['video'])
     video = (f'<div class="vslot" data-v="{vid}" data-t="{esc(e["nombre"])}"></div>' if vid
              else '<p class="sinvideo">Este ejercicio se explica con el texto de arriba.</p>' if 'sin video' in e['video']
              else '<p class="sinvideo">Video en preparación. Mientras tanto, seguí la explicación de arriba.</p>')
     cuidado = f'<p class="cuidado"><b>Ojo:</b> {esc(e["cuidado"])}</p>' if e['cuidado'] else ''
+    return f'<p class="how">{esc(e["como"])}</p>{cuidado}{video}'
+
+def tarjeta(i, it):
+    e = EJ[it['id']]
     nota = f'<p class="nota">{esc(it["nota"])}</p>' if it.get('nota') else ''
+    alt = ''
+    if it.get('alt'):
+        a = EJ[it['alt']]
+        alt = f'<details class="ex-d alt"><summary>¿No tenés esta máquina o está ocupada? Hacé: {esc(a["nombre"])}</summary><p class="altnota">Mismo trabajo, mismas series, repeticiones y descanso.</p>{cuerpo(a)}</details>'
     return f'''<article class="card ex"><h3>{i}. {esc(e["nombre"])}</h3>
 <div class="meta"><div><b>{esc(it["series"])} × {esc(it["reps"])}</b><span>Series</span></div><div><b>{esc(it["rir"])}</b><span>Esfuerzo</span></div><div><b>{esc(it["descanso"])}</b><span>Descanso</span></div></div>
 {nota}<p class="why">{esc(e["por_que"])}</p>
-<details class="ex-d"><summary>Cómo se hace y video</summary><p class="how">{esc(e["como"])}</p>{cuidado}{video}</details></article>'''
+<details class="ex-d"><summary>Cómo se hace y video</summary>{cuerpo(e)}</details>{alt}</article>'''
 
 def pagina(plan):
     out = []
@@ -68,7 +75,15 @@ if __name__ == '__main__':
     plan = json.load(open(sys.argv[1]))
     token = sys.argv[2] if len(sys.argv) > 2 else secrets.token_urlsafe(18)
     for d in plan['dias']:
-        for it in d['ejercicios']: assert it['id'] in EJ, it['id']
+        for it in d['ejercicios']:
+            assert it['id'] in EJ, it['id']
+            if it.get('alt'):
+                assert it['alt'] in EJ and it['alt'] != it['id'], ('alt invalida', it['id'])
+                m, n = EJ[it['id']], EJ[it['alt']]
+                if m['musculo'].split()[0] != n['musculo'].split()[0] or not yt(n['video']):
+                    print('AVISO: revisar alternativa', it['id'], '->', it['alt'], '(distinto musculo o sin video)')
+            else:
+                print('AVISO: sin alternativa en', it['id'])
     dest = AQUI.parent/'p'/token
     dest.mkdir(parents=True, exist_ok=True)
     (dest/'index.html').write_text(pagina(plan), encoding='utf-8')

@@ -21,35 +21,40 @@
      "reps": "8-12",
      "rir": "2 de reserva",
      "descanso": "2:00",
-     "nota": "Empezá liviano la primera semana."
+     "nota": "Empezá liviano la primera semana.",
+     "alt": "EMP-006"
     },
     {
      "id": "EMP-004",
      "series": "3",
      "reps": "10-12",
      "rir": "2 de reserva",
-     "descanso": "2:00"
+     "descanso": "2:00",
+     "alt": "EMP-008"
     },
     {
      "id": "EMP-009",
      "series": "3",
      "reps": "12-15",
      "rir": "1 a 2 de reserva",
-     "descanso": "1:30"
+     "descanso": "1:30",
+     "alt": "EMP-011"
     },
     {
      "id": "EMP-052",
      "series": "3",
      "reps": "12-15",
      "rir": "2 de reserva",
-     "descanso": "1:30"
+     "descanso": "1:30",
+     "alt": "EMP-056"
     },
     {
      "id": "EMP-065",
      "series": "2",
      "reps": "10-15",
      "rir": "1 de reserva",
-     "descanso": "1:30"
+     "descanso": "1:30",
+     "alt": "EMP-063"
     }
    ]
   }
