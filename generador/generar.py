@@ -15,13 +15,13 @@ def yt(u):
     m = re.search(r'(?:v=|shorts/)([\w-]{11})', u or '')
     return m.group(1) if m else None
 
-CSS = """:root{--bg:#0f1112;--card:#1a1d1f;--fg:#f2f2f0;--muted:#a3a8aa;--line:#2b3033;--accent:#ff4a2e;--accent-fg:#fff;--soft:#24282b;--warn:#3a2a14;color-scheme:dark}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-main{max-width:640px;margin:0 auto;padding:20px 16px 48px}h1{font-size:1.6rem;line-height:1.15;margin:0 0 4px;text-wrap:balance;text-transform:uppercase;letter-spacing:.02em}h2{font-size:1.05rem;margin:28px 0 10px;text-transform:uppercase;letter-spacing:.06em;border-left:4px solid var(--accent);padding-left:10px}
+CSS = """:root{--bg:#0c0c0b;--card:#171614;--fg:#f2ede6;--muted:#9b9288;--line:#2c2925;--accent:#ff4b1f;--accent-fg:#fff;--soft:#201e1b;--warn:#3a2a14;--display:'Anton','Arial Narrow',sans-serif;--body:'Archivo','Helvetica Neue',Arial,sans-serif;--mono:'JetBrains Mono',Menlo,monospace;color-scheme:dark}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 var(--body)}
+main{max-width:640px;margin:0 auto;padding:20px 16px 48px}h1{font-family:var(--display);font-weight:400;font-size:1.9rem;line-height:1.15;margin:0 0 4px;text-wrap:balance;text-transform:uppercase;letter-spacing:.02em}h2{font-family:var(--display);font-weight:400;font-size:1.25rem;margin:28px 0 10px;text-transform:uppercase;letter-spacing:.06em;border-left:4px solid var(--accent);padding-left:10px}
 .sub{color:var(--muted);margin:0 0 16px}.aviso{background:var(--warn);border-radius:8px;padding:10px 12px;font-size:.9rem;margin:0 0 20px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin:0 0 14px}.warm ol{margin:8px 0 0;padding-left:20px}.warm li{margin:4px 0}
 .ex h3{margin:0 0 6px;font-size:1.05rem}.meta{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}.meta div{background:var(--soft);border-radius:8px;padding:8px;text-align:center;min-width:0}
-.meta b{display:block;font-size:1rem}.meta span{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}.nota{margin:8px 0;font-weight:600}.why{margin:8px 0}
+.meta b{display:block;font-size:1rem;font-family:var(--mono)}.meta span{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}.nota{margin:8px 0;font-weight:600}.why{margin:8px 0}
 details{margin-top:10px;border-top:1px solid var(--line);padding-top:10px}summary{cursor:pointer;font-weight:600;color:var(--accent);min-height:44px;display:flex;align-items:center}
 .how{margin:8px 0 12px}.cuidado{font-size:.9rem;color:var(--muted);margin:0 0 12px}.video{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:8px;overflow:hidden}
 .video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}.vbtn{min-height:44px;padding:0 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--fg);font:inherit;margin-top:8px}
@@ -58,7 +58,7 @@ def pagina(plan):
     saludo = f'Hola, {esc(plan["nombre"])}. ' if plan.get('nombre') else ''
     aviso = f'<p class="aviso">{esc(plan["_aviso"])}</p>' if plan.get('_aviso') else ''
     return f'''<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex,nofollow"><title>Tu plan de entrenamiento</title><style>{CSS}</style></head><body><main>
+<meta name="robots" content="noindex,nofollow"><title>Tu plan de entrenamiento</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"><style>{CSS}</style></head><body><main>
 <h1>{saludo}Tu plan de entrenamiento ({esc(plan["version"])})</h1><p class="sub">Primera revisión: {esc(plan["revision"])}.</p>{aviso}
 {"".join(out)}
 <p class="pie">Si algo no se ve o no se entiende, avisame por el chat. Si sentís dolor (no cansancio), frená ese ejercicio y escribime.</p>
