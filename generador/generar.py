@@ -25,7 +25,7 @@ main{max-width:640px;margin:0 auto;padding:20px 16px 48px}h1{font-family:var(--d
 details{margin-top:10px;border-top:1px solid var(--line);padding-top:10px}summary{cursor:pointer;font-weight:600;color:var(--accent);min-height:44px;display:flex;align-items:center}
 .how{margin:8px 0 12px}.cuidado{font-size:.9rem;color:var(--muted);margin:0 0 12px}.video{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:8px;overflow:hidden}
 .video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}.vbtn{min-height:44px;padding:0 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--fg);font:inherit;margin-top:8px}
-.enlace{font-size:.85rem;color:var(--muted);margin:8px 0 0}.enlace a{color:var(--accent)}.altnota{font-size:.9rem;color:var(--muted);margin:8px 0}details.alt summary{font-weight:500;color:var(--muted);min-height:44px}.sinvideo{font-size:.9rem;color:var(--muted)}.pie{font-size:.85rem;color:var(--muted);margin-top:24px}"""
+.enlace{font-size:.85rem;color:var(--muted);margin:8px 0 0}.enlace a{color:var(--accent)}.altnota{font-size:.9rem;color:var(--muted);margin:8px 0}.altbox{margin-top:12px;border:1px dashed var(--accent);border-radius:8px;padding:10px 12px}.altlab{font:700 .72rem/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}.altn{font-weight:700;margin:6px 0 2px}.altbox details{margin-top:6px;padding-top:0;border-top:0}.sinvideo{font-size:.9rem;color:var(--muted)}.pie{font-size:.85rem;color:var(--muted);margin-top:24px}"""
 
 JS = """(function(){var cur=null;document.querySelectorAll('details.ex-d').forEach(function(d){d.addEventListener('toggle',function(){var box=d.querySelector('.vslot');if(!box)return;
 if(d.open){document.querySelectorAll('.vslot').forEach(function(b){if(b!==box)b.innerHTML=''});
@@ -46,7 +46,7 @@ def tarjeta(i, it):
     alt = ''
     if it.get('alt'):
         a = EJ[it['alt']]
-        alt = f'<details class="ex-d alt"><summary>¿No tenés esta máquina o está ocupada? Hacé: {esc(a["nombre"])}</summary><p class="altnota">Mismo trabajo, mismas series, repeticiones y descanso.</p>{cuerpo(a)}</details>'
+        alt = f'''<div class="altbox"><span class="altlab">Opción 2 · misma zona</span><p class="altn">{esc(a["nombre"])}</p><p class="altnota">Usala si no tenés esta máquina o está ocupada. Mismas series, repeticiones y descanso.</p><details class="ex-d alt"><summary>Cómo se hace y video</summary>{cuerpo(a)}</details></div>'''
     return f'''<article class="card ex"><h3>{i}. {esc(e["nombre"])}</h3>
 <div class="meta"><div><b>{esc(it["series"])} × {esc(it["reps"])}</b><span>Series</span></div><div><b>{esc(it["rir"])}</b><span>Esfuerzo</span></div><div><b>{esc(it["descanso"])}</b><span>Descanso</span></div></div>
 {nota}<p class="why">{esc(e["por_que"])}</p>
