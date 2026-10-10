@@ -15,10 +15,9 @@ def yt(u):
     m = re.search(r'(?:v=|shorts/)([\w-]{11})', u or '')
     return m.group(1) if m else None
 
-CSS = """:root{--bg:#f5f4f1;--card:#fff;--fg:#1d2327;--muted:#5d676d;--line:#dcdad3;--accent:#0f6b5c;--accent-fg:#fff;--soft:#e4efec;--warn:#fff4d6;color-scheme:light}
-@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#14191b;--card:#1c2326;--fg:#e8ecec;--muted:#9aa6aa;--line:#2c373b;--accent:#4fc0a8;--accent-fg:#0b1412;--soft:#1e3330;--warn:#3a3217;color-scheme:dark}}
+CSS = """:root{--bg:#0f1112;--card:#1a1d1f;--fg:#f2f2f0;--muted:#a3a8aa;--line:#2b3033;--accent:#ff4a2e;--accent-fg:#fff;--soft:#24282b;--warn:#3a2a14;color-scheme:dark}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-main{max-width:640px;margin:0 auto;padding:20px 16px 48px}h1{font-size:1.5rem;line-height:1.2;margin:0 0 4px;text-wrap:balance}h2{font-size:1.1rem;margin:28px 0 10px}
+main{max-width:640px;margin:0 auto;padding:20px 16px 48px}h1{font-size:1.6rem;line-height:1.15;margin:0 0 4px;text-wrap:balance;text-transform:uppercase;letter-spacing:.02em}h2{font-size:1.05rem;margin:28px 0 10px;text-transform:uppercase;letter-spacing:.06em;border-left:4px solid var(--accent);padding-left:10px}
 .sub{color:var(--muted);margin:0 0 16px}.aviso{background:var(--warn);border-radius:8px;padding:10px 12px;font-size:.9rem;margin:0 0 20px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin:0 0 14px}.warm ol{margin:8px 0 0;padding-left:20px}.warm li{margin:4px 0}
 .ex h3{margin:0 0 6px;font-size:1.05rem}.meta{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}.meta div{background:var(--soft);border-radius:8px;padding:8px;text-align:center;min-width:0}
