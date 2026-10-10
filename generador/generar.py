@@ -25,7 +25,7 @@ main{max-width:640px;margin:0 auto;padding:20px 16px 48px}h1{font-family:var(--d
 details{margin-top:10px;border-top:1px solid var(--line);padding-top:10px}summary{cursor:pointer;font-weight:600;color:var(--accent);min-height:44px;display:flex;align-items:center}
 .how{margin:8px 0 12px}.cuidado{font-size:.9rem;color:var(--muted);margin:0 0 12px}.video{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:8px;overflow:hidden}
 .video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}.vbtn{min-height:44px;padding:0 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--fg);font:inherit;margin-top:8px}
-.altnota{font-size:.9rem;color:var(--muted);margin:8px 0}details.alt summary{font-weight:500;color:var(--muted);min-height:44px}.sinvideo{font-size:.9rem;color:var(--muted)}.pie{font-size:.85rem;color:var(--muted);margin-top:24px}"""
+.enlace{font-size:.85rem;color:var(--muted);margin:8px 0 0}.enlace a{color:var(--accent)}.altnota{font-size:.9rem;color:var(--muted);margin:8px 0}details.alt summary{font-weight:500;color:var(--muted);min-height:44px}.sinvideo{font-size:.9rem;color:var(--muted)}.pie{font-size:.85rem;color:var(--muted);margin-top:24px}"""
 
 JS = """(function(){var cur=null;document.querySelectorAll('details.ex-d').forEach(function(d){d.addEventListener('toggle',function(){var box=d.querySelector('.vslot');if(!box)return;
 if(d.open){document.querySelectorAll('.vslot').forEach(function(b){if(b!==box)b.innerHTML=''});
@@ -34,7 +34,7 @@ var r=document.createElement('button');r.type='button';r.className='vbtn';r.text
 
 def cuerpo(e):
     vid = yt(e['video'])
-    video = (f'<div class="vslot" data-v="{vid}" data-t="{esc(e["nombre"])}"></div>' if vid
+    video = (f'<div class="vslot" data-v="{vid}" data-t="{esc(e["nombre"])}"></div><p class="enlace">Si el video no carga: <a href="{esc(e["video"])}" target="_blank" rel="noopener noreferrer">abrilo en YouTube</a></p>' if vid
              else '<p class="sinvideo">Este ejercicio se explica con el texto de arriba.</p>' if 'sin video' in e['video']
              else '<p class="sinvideo">Video en preparación. Mientras tanto, seguí la explicación de arriba.</p>')
     cuidado = f'<p class="cuidado"><b>Ojo:</b> {esc(e["cuidado"])}</p>' if e['cuidado'] else ''
