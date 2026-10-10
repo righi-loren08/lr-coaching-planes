@@ -4,7 +4,7 @@ Uso: python3 generar.py plan.json [token]
 - datos/ejercicios.json: copia de la pestaña Ejercicios del Sheet (sin datos de personas).
 - plan.json: dias y ejercicios del cliente (solo ID de ejercicio + series/reps/RIR/descanso/nota).
 - Salida: ../p/<token>/index.html. El token (largo y aleatorio) es el link privado del cliente.
-Privacidad: la pagina no lleva nombre ni datos de salud, y pide que no la indexen los buscadores."""
+Privacidad: la pagina lleva como mucho el primer nombre (campo opcional 'nombre'), nunca datos de salud, y pide que no la indexen los buscadores."""
 import json, re, sys, html, secrets, pathlib
 
 AQUI = pathlib.Path(__file__).parent
@@ -55,10 +55,11 @@ def pagina(plan):
             out.append(f'<section class="card warm"><b>Calentamiento del día</b><p class="sub" style="margin:4px 0 0">{esc(c["nota"])}</p><ol>{li}</ol></section>')
         for i, it in enumerate(d['ejercicios'], 1):
             out.append(tarjeta(i, it))
+    saludo = f'Hola, {esc(plan["nombre"])}. ' if plan.get('nombre') else ''
     aviso = f'<p class="aviso">{esc(plan["_aviso"])}</p>' if plan.get('_aviso') else ''
     return f'''<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow"><title>Tu plan de entrenamiento</title><style>{CSS}</style></head><body><main>
-<h1>Tu plan de entrenamiento ({esc(plan["version"])})</h1><p class="sub">Primera revisión: {esc(plan["revision"])}.</p>{aviso}
+<h1>{saludo}Tu plan de entrenamiento ({esc(plan["version"])})</h1><p class="sub">Primera revisión: {esc(plan["revision"])}.</p>{aviso}
 {"".join(out)}
 <p class="pie">Si algo no se ve o no se entiende, avisame por el chat. Si sentís dolor (no cansancio), frená ese ejercicio y escribime.</p>
 </main><script>{JS}</script></body></html>'''

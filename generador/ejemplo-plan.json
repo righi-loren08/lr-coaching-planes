@@ -31,14 +31,14 @@
      "descanso": "2:00"
     },
     {
-     "id": "EMP-015",
+     "id": "EMP-009",
      "series": "3",
      "reps": "12-15",
      "rir": "1 a 2 de reserva",
      "descanso": "1:30"
     },
     {
-     "id": "EMP-064",
+     "id": "EMP-052",
      "series": "3",
      "reps": "12-15",
      "rir": "2 de reserva",
@@ -53,5 +53,6 @@
     }
    ]
   }
- ]
+ ],
+ "nombre": "Lorenzo"
 }
