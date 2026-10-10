@@ -1,0 +1,57 @@
+{
+ "_aviso": "EJEMPLO con datos de muestra. No es el plan de ninguna persona.",
+ "codigo": "EJEMPLO",
+ "version": "V1",
+ "revision": "4 semanas desde la entrega",
+ "dias": [
+  {
+   "nombre": "Martes: pecho y tríceps",
+   "calentamiento": {
+    "nota": "2 vueltas de 10 repeticiones, despacio. Tiene que sentirse fácil.",
+    "ejercicios": [
+     "CAL-003",
+     "CAL-008",
+     "CAL-006"
+    ]
+   },
+   "ejercicios": [
+    {
+     "id": "EMP-002",
+     "series": "4",
+     "reps": "8-12",
+     "rir": "2 de reserva",
+     "descanso": "2:00",
+     "nota": "Empezá liviano la primera semana."
+    },
+    {
+     "id": "EMP-004",
+     "series": "3",
+     "reps": "10-12",
+     "rir": "2 de reserva",
+     "descanso": "2:00"
+    },
+    {
+     "id": "EMP-015",
+     "series": "3",
+     "reps": "12-15",
+     "rir": "1 a 2 de reserva",
+     "descanso": "1:30"
+    },
+    {
+     "id": "EMP-064",
+     "series": "3",
+     "reps": "12-15",
+     "rir": "2 de reserva",
+     "descanso": "1:30"
+    },
+    {
+     "id": "EMP-065",
+     "series": "2",
+     "reps": "10-15",
+     "rir": "1 de reserva",
+     "descanso": "1:30"
+    }
+   ]
+  }
+ ]
+}
