@@ -3,33 +3,125 @@
  "version": "V1",
  "revision": "7 de noviembre de 2026",
  "objetivo": "ganar músculo",
- "calorias": ["2.800", "3.100"],
- "proteina": ["140", "155"],
+ "calorias": [
+  "2.800",
+  "3.100"
+ ],
+ "proteina": [
+  "140",
+  "155"
+ ],
  "comidas": [
-  {"nombre": "Desayuno", "opciones": [
-   {"plato": "2 huevos revueltos, 2 rebanadas de pan tostado, 1 banana, 1 cucharada de pasta de maní y 1 vaso de leche.", "kcal": 653, "prot": 32, "img": "img/desayuno-1.jpg"},
-   {"plato": "1 pote de yogur natural con 4 cucharadas de avena, 1 banana en rodajas, 1 cucharada de pasta de maní y 2 huevos duros.", "kcal": 621, "prot": 31, "img": "img/desayuno-2.jpg"}]},
-  {"nombre": "Media mañana", "nota": "En el colegio, sin heladera: todo esto aguanta fuera de la heladera.", "opciones": [
-   {"plato": "2 rebanadas de pan tostado con 1 cucharada de pasta de maní, 1 banana y 1 puñado chico de frutos secos.", "kcal": 446, "prot": 14, "img": "img/media-1.jpg"},
-   {"plato": "1 sándwich de pan de miga con 2 fetas finas de queso duro, 1 manzana y 1 puñado chico de frutos secos.", "kcal": 452, "prot": 17, "img": "img/media-2.jpg"}]},
-  {"nombre": "Almuerzo", "nota": "Es la comida de tu familia. Si lo que hay es distinto, armá el plato con la misma idea.", "opciones": [
-   {"plato": "1 pechuga chica de pollo (unos 120 g cocida), 1 taza y media de arroz cocido y 1 plato de ensalada con 1 cucharada de aceite de oliva.", "kcal": 650, "prot": 44, "img": "img/almuerzo-1.jpg"},
-   {"plato": "1 porción de lomo de cerdo (unos 120 g cocido), 2 papas medianas hervidas (unos 300 g) y 1 plato de ensalada con 1 cucharada de aceite de oliva.", "kcal": 578, "prot": 38}]},
-  {"nombre": "Merienda", "nota": "Los días en que no vas directo al gimnasio.", "opciones": [
-   {"plato": "1 pote de yogur natural con 4 cucharadas de avena, 1 banana y 1 cucharada de pasta de maní.", "kcal": 477, "prot": 19},
-   {"plato": "2 rebanadas de pan tostado con 2 huevos fritos o revueltos, 1 banana y 1 cucharada de pasta de maní.", "kcal": 503, "prot": 24}]},
-  {"nombre": "Pre-entreno (martes y viernes)", "nota": "Salís del colegio a las 16:00 y vas directo al gimnasio: comelo en el colegio, antes de salir, en lugar de la merienda. No necesita heladera.", "opciones": [
-   {"plato": "3 rebanadas de pan con 2 cucharadas de pasta de maní y 1 banana.", "kcal": 533, "prot": 18},
-   {"plato": "1 sándwich de pan de miga con 2 fetas finas de queso duro, 1 banana y 1 puñado chico de frutos secos.", "kcal": 462, "prot": 18}]},
-  {"nombre": "Cena", "nota": "Es la comida de tu familia. Si lo que hay es distinto, armá el plato con la misma idea.", "opciones": [
-   {"plato": "1 bife chico (unos 100 g cocido), 1 plato hondo de fideos (unos 210 g cocidos) y 1 plato de ensalada con 1 cucharada de aceite de oliva.", "kcal": 694, "prot": 39},
-   {"plato": "1 pechuga chica de pollo (unos 100 g cocida), 2 tazas de arroz cocido y 1 plato de ensalada con 1 cucharada de aceite de oliva.", "kcal": 720, "prot": 41}]}
+  {
+   "nombre": "Desayuno",
+   "opciones": [
+    {
+     "plato": "2 huevos revueltos, 2 rebanadas de pan tostado, 1 banana, 1 cucharada de pasta de maní y 1 vaso de leche.",
+     "kcal": 653,
+     "prot": 32,
+     "img": "img/desayuno-1.jpg"
+    },
+    {
+     "plato": "1 pote de yogur natural con 4 cucharadas de avena, 1 banana en rodajas, 1 cucharada de pasta de maní y 2 huevos duros.",
+     "kcal": 621,
+     "prot": 31,
+     "img": "img/desayuno-2.jpg"
+    }
+   ]
+  },
+  {
+   "nombre": "Media mañana",
+   "nota": "En el colegio, sin heladera: todo esto aguanta fuera de la heladera.",
+   "opciones": [
+    {
+     "plato": "2 rebanadas de pan tostado con 1 cucharada de pasta de maní y 1 banana.",
+     "kcal": 359,
+     "prot": 11,
+     "img": "img/media-1.jpg"
+    },
+    {
+     "plato": "1 sándwich de pan de miga con 2 fetas finas de queso duro, 1 manzana y 1 puñado chico de frutos secos.",
+     "kcal": 452,
+     "prot": 17,
+     "img": "img/media-2.jpg"
+    }
+   ]
+  },
+  {
+   "nombre": "Almuerzo",
+   "nota": "Es la comida de tu familia. Si lo que hay es distinto, armá el plato con la misma idea.",
+   "opciones": [
+    {
+     "plato": "1 pechuga chica de pollo (unos 120 g cocida), 1 taza y media de arroz cocido y 1 plato de ensalada con 1 cucharada de aceite de oliva.",
+     "kcal": 650,
+     "prot": 44,
+     "img": "img/almuerzo-1.jpg"
+    },
+    {
+     "plato": "1 porción de lomo de cerdo (unos 120 g cocido), 2 papas medianas hervidas (unos 300 g) y 1 plato de ensalada con 1 cucharada de aceite de oliva.",
+     "kcal": 578,
+     "prot": 38
+    }
+   ]
+  },
+  {
+   "nombre": "Merienda",
+   "nota": "Todos los días, vuelvas de donde vuelvas.",
+   "opciones": [
+    {
+     "plato": "1 pote de yogur natural con 4 cucharadas de avena, 1 banana y 1 cucharada de pasta de maní.",
+     "kcal": 477,
+     "prot": 19
+    },
+    {
+     "plato": "2 rebanadas de pan tostado con 2 huevos fritos o revueltos, 1 banana y 1 cucharada de pasta de maní.",
+     "kcal": 503,
+     "prot": 24
+    }
+   ]
+  },
+  {
+   "nombre": "Pre-entreno (solo los días que entrenás)",
+   "nota": "Algo liviano antes de entrenar, en el colegio o antes de salir. No necesita heladera. Se suma a la merienda: no la reemplaza.",
+   "opciones": [
+    {
+     "plato": "2 rebanadas de pan tostado con 1 cucharada de mermelada.",
+     "kcal": 210,
+     "prot": 6
+    },
+    {
+     "plato": "1 banana y 1 rebanada de pan tostado.",
+     "kcal": 185,
+     "prot": 4
+    }
+   ]
+  },
+  {
+   "nombre": "Cena",
+   "nota": "Es la comida de tu familia. Si lo que hay es distinto, armá el plato con la misma idea.",
+   "opciones": [
+    {
+     "plato": "1 bife chico (unos 100 g cocido), 1 plato hondo de fideos (unos 210 g cocidos) y 1 plato de ensalada con 1 cucharada de aceite de oliva.",
+     "kcal": 694,
+     "prot": 39
+    },
+    {
+     "plato": "1 pechuga chica de pollo (unos 100 g cocida), 2 tazas de arroz cocido y 1 plato de ensalada con 1 cucharada de aceite de oliva.",
+     "kcal": 720,
+     "prot": 41
+    }
+   ]
+  }
  ],
  "reglas": [
   "Alterná: un día comé todas las comidas de la Opción 1 y al día siguiente todas las de la Opción 2. Si una comida se te complica, usá la otra opción, pero no la saltees.",
-  "Martes y viernes comé el pre-entreno en lugar de la merienda.",
+  "Los días que entrenás sumá el pre-entreno antes de ir al gimnasio. La merienda la comés igual cuando vuelvas.",
   "En el almuerzo y la cena, si tu familia cocina otra cosa, armá el plato con la misma idea: una porción de carne, pollo o pescado, arroz, papa o fideos, y ensalada.",
   "Cociná por tandas: un día de la semana dejá hechos el arroz, el pollo y la carne para varios días."
  ],
- "registrar": ["Tu peso en ayunas, 3 días por semana (lunes, miércoles y viernes).", "Cuánto cumpliste del plan de comidas.", "Cómo estuvo tu hambre."]
+ "registrar": [
+  "Tu peso en ayunas, 3 días por semana (lunes, miércoles y viernes).",
+  "Cuánto cumpliste del plan de comidas.",
+  "Cómo estuvo tu hambre."
+ ]
 }

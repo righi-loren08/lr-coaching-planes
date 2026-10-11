@@ -61,8 +61,8 @@ if __name__ == '__main__':
         for o in c['opciones']:
             if o.get('img') and not (dest/o['img']).exists():
                 print('AVISO: falta la imagen', o['img'])
-    # Dia tipo: sin pre-entreno (usa merienda) y con pre-entreno; opcion 1 todo el dia y opcion 2 todo el dia
-    for sufijo, excluye in (('con merienda', 'Pre-entreno'), ('con pre-entreno', 'Merienda')):
+    # Dia tipo: merienda siempre; el pre-entreno se suma solo los dias de entrenamiento
+    for sufijo, excluye in (('sin entrenar', 'Pre-entreno'), ('dia de entrenamiento', 'zzz')):
         for k in (0, 1):
             kc = sum(c['opciones'][k]['kcal'] for c in p['comidas'] if not c['nombre'].startswith(excluye))
             pr = sum(c['opciones'][k]['prot'] for c in p['comidas'] if not c['nombre'].startswith(excluye))
