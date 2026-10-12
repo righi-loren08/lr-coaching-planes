@@ -1,0 +1,9 @@
+{"nombre": "Cliente de prueba", "version": "V1", "actualizado": "sábado 7 de noviembre", "estado": "mantener",
+ "_aviso": "Datos de ejemplo inventados, solo para probar el diseño del panel.",
+ "semanas": [
+  {"semana": "S1", "peso": [70.4, 70.6, 70.2], "sesiones": 4, "planificadas": 4, "adherencia": "la mayoría", "rendimiento": "igual"},
+  {"semana": "S2", "peso": [70.5, 70.7, 70.6], "sesiones": 4, "planificadas": 4, "adherencia": "casi todas", "rendimiento": "mejor", "sueno": 7},
+  {"semana": "S3", "peso": [70.8, 70.7, 70.9], "sesiones": 3, "planificadas": 4, "adherencia": "la mayoría", "rendimiento": "mejor", "sueno": 6.5},
+  {"semana": "S4", "peso": [70.9, 71.1, 71.0], "sesiones": 4, "planificadas": 4, "adherencia": "casi todas", "rendimiento": "igual", "sueno": 7.5},
+  {"semana": "S5", "peso": [71.2, null, 71.3], "sesiones": 4, "planificadas": 4, "adherencia": "la mitad", "rendimiento": "peor", "sueno": 6}],
+ "medidas": [{"semana": "S1", "cintura": 78}, {"semana": "S4", "cintura": 78.5}]}
