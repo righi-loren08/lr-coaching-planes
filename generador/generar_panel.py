@@ -58,29 +58,50 @@ def donut(pct, centro, sub):
             f'<text x="70" y="76" text-anchor="middle" font-size="26" font-weight="700" fill="var(--fg)" font-family="JetBrains Mono,monospace">{esc(centro)}</text>'
             f'<text x="70" y="96" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="JetBrains Mono,monospace">{esc(sub)}</text></svg>')
 
-def barras(vals, etiquetas, textos, lo=0, hi=None, color='var(--accent)', tendencia=False):
-    W, H, T, B = 600, 210, 34, 36; n = len(vals); gap = 14; bw = (W-gap*(n+1))/n
+GOLD = '#ffc857'   # linea de tendencia: color propio, distinto de las barras y de verde/rojo
+_n = [0]
+GRAD = {NEU: ('#efe8dc', '#8a8379'), OK: ('#7ae8b0', '#2d9a66'), 'var(--accent)': ('#ff7a52', '#d93a12')}
+
+def _barra(x, y, w, h, r, fill):
+    r = min(r, w/2, h)
+    return f'<path d="M{x:.1f},{y+h:.1f} L{x:.1f},{y+r:.1f} Q{x:.1f},{y:.1f} {x+r:.1f},{y:.1f} L{x+w-r:.1f},{y:.1f} Q{x+w:.1f},{y:.1f} {x+w:.1f},{y+r:.1f} L{x+w:.1f},{y+h:.1f} Z" fill="{fill}"/>'
+
+def barras(vals, etiquetas, textos, lo=0, hi=None, color='var(--accent)', tendencia=False, ejey=True):
+    _n[0] += 1; gid = f'g{_n[0]}'
+    W, H, T, B = 600, 230, 34, 36; L = 46 if ejey else 8; R = 8
+    n = len(vals); gap = 14; bw = (W-L-R-gap*(n+1))/n
     cs = [v for v in vals if v is not None]
     hi = hi if hi is not None else (max(cs) if cs else 1)
-    full = H-T-B; out = ''; tops = []
+    full = H-T-B; c1, c2 = GRAD.get(color, (color, color))
+    out = f'<defs><linearGradient id="{gid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="{c1}"/><stop offset="1" stop-color="{c2}"/></linearGradient></defs>'
+    for k in range(4):                                   # grilla y etiquetas del eje
+        yy = T + full*k/3
+        out += f'<line x1="{L}" y1="{yy:.1f}" x2="{W-R}" y2="{yy:.1f}" stroke="var(--line)" stroke-width="1" opacity=".8"/>'
+        if ejey:
+            v = hi - (hi-lo)*k/3
+            out += f'<text x="{L-8}" y="{yy+4:.1f}" text-anchor="end" font-size="13" fill="var(--muted)" font-family="JetBrains Mono,monospace">{fmt(v, 0 if (hi-lo) >= 6 else 1)}</text>'
+    tops = []
     for i, v in enumerate(vals):
-        x = gap + i*(bw+gap)
+        x = L + gap + i*(bw+gap)
         if v is None:
             out += f'<text x="{x+bw/2:.1f}" y="{T+full/2}" text-anchor="middle" font-size="16" fill="var(--muted)">sin dato</text>'
         else:
             h = full*max(0.02, min((v-lo)/(hi-lo), 1)) if hi > lo else 0
-            out += (f'<rect x="{x:.1f}" y="{T}" width="{bw:.1f}" height="{full}" rx="6" fill="var(--soft)"/>'
-                    f'<rect x="{x:.1f}" y="{T+full-h:.1f}" width="{bw:.1f}" height="{h:.1f}" rx="6" fill="{color}"/>'
-                    f'<text x="{x+bw/2:.1f}" y="{T-8}" text-anchor="middle" font-size="19" font-weight="700" fill="var(--fg)" font-family="JetBrains Mono,monospace">{esc(textos[i])}</text>')
+            out += _barra(x, T+full-h, bw, h, 8, f'url(#{gid})')
+            out += f'<text x="{x+bw/2:.1f}" y="{T+full-h-8:.1f}" text-anchor="middle" font-size="18" font-weight="700" fill="var(--fg)" font-family="JetBrains Mono,monospace">{esc(textos[i])}</text>'
             tops.append((x+bw/2, T+full-h))
         out += f'<text x="{x+bw/2:.1f}" y="{H-10}" text-anchor="middle" font-size="17" fill="var(--muted)" font-family="JetBrains Mono,monospace">{esc(etiquetas[i])}</text>'
     if tendencia and len(tops) >= 2:
-        out += '<polyline points="' + ' '.join(f'{a:.1f},{b-6:.1f}' for a, b in tops) + '" fill="none" stroke="var(--fg)" stroke-width="2" stroke-dasharray="5 5" opacity=".7"/>'
+        out += '<polyline points="' + ' '.join(f'{a:.1f},{b:.1f}' for a, b in tops) + f'" fill="none" stroke="{GOLD}" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/>'
+        out += ''.join(f'<circle cx="{a:.1f}" cy="{b:.1f}" r="6" fill="{GOLD}" stroke="var(--card)" stroke-width="3"/>' for a, b in tops)
     return f'<svg viewBox="0 0 {W} {H}" role="img">{out}</svg>'
 
 def eje(vals, margen=1):
     cs = [v for v in vals if v is not None]
-    return (math.floor(min(cs))-margen, math.ceil(max(cs))+margen) if cs else (0, 1)
+    if not cs: return (0, 1)
+    lo, hi = math.floor(min(cs))-margen, math.ceil(max(cs))+margen
+    while (hi-lo) % 3: hi += 1                        # 3 tramos iguales: etiquetas redondas
+    return lo, hi
 
 def pagina(p):
     S = p.get('controles') or p['semanas']
@@ -123,7 +144,7 @@ def pagina(p):
         if pa is not None and pb is not None:
             d = round(pb-pa, 1)
             difs += f'<div class="chip"><b class="{clase(d, obj["peso"])}">{signo(d)}</b><span>{esc(b["semana"])} vs {esc(a["semana"])}</span></div>'
-    nota_eje = '<p class="cap">Las barras no empiezan en cero, para que se vean los cambios chicos. La línea punteada une los promedios.</p>'
+    nota_eje = '<p class="cap">Las barras no empiezan en cero, para que se vean los cambios chicos. La línea amarilla une los promedios.</p>'
     filas = ''.join(f'<tr><td>{esc(s["semana"])}</td>' + ''.join(f'<td>{fmt(x)}</td>' for x in (list(s.get('peso', [])) + [None]*3)[:3]) + f'<td><b>{fmt(prom(s))}</b></td></tr>' for s in S)
     tabla_peso = f'<div class="tabla"><table><tr><th>Control</th><th>Lun</th><th>Mié</th><th>Vie</th><th>Prom.</th></tr>{filas}</table></div>'
     peso = (f'<h2>Peso</h2><section class="card"><h3>Promedio por control (kg)</h3>{peso_g}'
@@ -150,13 +171,13 @@ def pagina(p):
 
     # Entrenamiento
     ses_g = barras([s.get('sesiones') for s in V], et, [f"{s.get('sesiones')}/{s.get('planificadas')}" if s.get('sesiones') is not None else '' for s in V],
-                   0, max([s.get('planificadas') or 0 for s in V] + [1]), color=OK)
+                   0, max([s.get('planificadas') or 0 for s in V] + [1]), color=OK, ejey=False)
     rnd = ''.join(f'<div class="chip"><b class="{"bien" if s["rendimiento"]=="mejor" else "mal" if s["rendimiento"]=="peor" else "neu"}">{RND[s["rendimiento"]][0]}</b><span>{esc(s["semana"])} · {RND[s["rendimiento"]][1]}</span></div>' for s in S if s.get('rendimiento') in RND)
     entren = (f'<h2>Entrenamiento</h2><section class="card"><h3>Sesiones por control</h3>{ses_g}<p class="cap">Hechas sobre planificadas en cada período de cuatro semanas.</p></section>'
               f'<section class="card"><h3>Rendimiento frente al control anterior</h3><div class="chips">{rnd}</div></section>')
 
     # Alimentacion (historial)
-    adh_g = barras([ADH.get(s.get('adherencia')) for s in V], et, [s.get('adherencia', '') for s in V], 0, 4, color=OK)
+    adh_g = barras([ADH.get(s.get('adherencia')) for s in V], et, [s.get('adherencia', '') for s in V], 0, 4, color=OK, ejey=False)
     alim = f'<h2>Alimentación</h2><section class="card"><h3>Comidas del plan que cumpliste</h3>{adh_g}</section>'
 
     # Como te sentiste
