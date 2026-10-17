@@ -1,5 +1,4 @@
-{"nombre": "Lorenzo", "version": "V1", "actualizado": "sábado 17 de octubre", "estado": "mantener",
+{"nombre": "Lorenzo", "version": "V1", "actualizado": "sábado 17 de octubre", "estado": "mantener", "objetivo": "ganar músculo",
  "_aviso": "Envío de prueba (código PRUEBA). No son datos reales de seguimiento.",
- "semanas": [
-  {"semana": "C1", "peso": [79, 80, 81], "sesiones": 5, "planificadas": 20, "adherencia": "casi todas", "rendimiento": "mejor", "sueno": 7}],
- "medidas": [{"semana": "C1", "cintura": 81}]}
+ "controles": [
+  {"semana": "C1", "peso": [79, 80, 81], "sesiones": 5, "planificadas": 20, "adherencia": "casi todas", "rendimiento": "mejor", "sueno": 7, "energia": 3, "hambre": 3, "satisfaccion": 4, "cintura": 81, "otras": {"brazo": 38}}]}

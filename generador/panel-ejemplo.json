@@ -1,9 +1,7 @@
-{"nombre": "Cliente de prueba", "version": "V1", "actualizado": "sábado 7 de noviembre", "estado": "mantener",
- "_aviso": "Datos de ejemplo inventados, solo para probar el diseño del panel.",
- "semanas": [
-  {"semana": "S1", "peso": [70.4, 70.6, 70.2], "sesiones": 4, "planificadas": 4, "adherencia": "la mayoría", "rendimiento": "igual"},
-  {"semana": "S2", "peso": [70.5, 70.7, 70.6], "sesiones": 4, "planificadas": 4, "adherencia": "casi todas", "rendimiento": "mejor", "sueno": 7},
-  {"semana": "S3", "peso": [70.8, 70.7, 70.9], "sesiones": 3, "planificadas": 4, "adherencia": "la mayoría", "rendimiento": "mejor", "sueno": 6.5},
-  {"semana": "S4", "peso": [70.9, 71.1, 71.0], "sesiones": 4, "planificadas": 4, "adherencia": "casi todas", "rendimiento": "igual", "sueno": 7.5},
-  {"semana": "S5", "peso": [71.2, null, 71.3], "sesiones": 4, "planificadas": 4, "adherencia": "la mitad", "rendimiento": "peor", "sueno": 6}],
- "medidas": [{"semana": "S1", "cintura": 78}, {"semana": "S4", "cintura": 78.5}]}
+{"nombre": "Cliente de ejemplo", "version": "V2", "actualizado": "sábado 28 de febrero", "estado": "mantener", "objetivo": "ganar músculo",
+ "_aviso": "Datos de ejemplo inventados, solo para ver cómo queda el panel con varios controles.",
+ "controles": [
+  {"semana": "C1", "peso": [70.4, 70.6, 70.2], "sesiones": 15, "planificadas": 16, "adherencia": "la mayoría", "rendimiento": "igual", "sueno": 6.5, "energia": 3, "hambre": 4, "satisfaccion": 3, "cintura": 78, "otras": {"brazo": 33, "pecho": 96}},
+  {"semana": "C2", "peso": [70.9, 71.1, 71.0], "sesiones": 14, "planificadas": 16, "adherencia": "casi todas", "rendimiento": "mejor", "sueno": 7, "energia": 4, "hambre": 3, "satisfaccion": 4, "cintura": 78.5, "otras": {"brazo": 33.5, "pecho": 97}},
+  {"semana": "C3", "peso": [71.4, 71.6, 71.5], "sesiones": 16, "planificadas": 16, "adherencia": "casi todas", "rendimiento": "mejor", "sueno": 7.5, "energia": 4, "hambre": 3, "satisfaccion": 4, "cintura": 78.8, "otras": {"brazo": 34, "pecho": 98}},
+  {"semana": "C4", "peso": [71.9, null, 72.1], "sesiones": 12, "planificadas": 16, "adherencia": "la mitad", "rendimiento": "peor", "sueno": 6, "energia": 2, "hambre": 5, "satisfaccion": 3, "cintura": 79.5, "otras": {"brazo": 34, "pecho": 98.5}}]}
