@@ -30,7 +30,7 @@ def peso_prom(s):
 def linea(pts, etiquetas, unidad):
     W, H, L, R, T, B = 600, 230, 36, 30, 34, 36
     ys = [p for p in pts if p is not None]
-    if len(ys) < 2: return '<p class="cap">Todavía hay pocos datos para dibujar la tendencia. Con 2 semanas ya aparece.</p>'
+    if len(ys) < 2: return '<p class="cap">Todavía hay pocos datos para dibujar la tendencia. Con 2 controles ya aparece.</p>'
     lo, hi = min(ys), max(ys); pad = max((hi-lo)*0.3, 0.5); lo, hi = lo-pad, hi+pad
     n = len(pts); X = lambda i: L + (W-L-R)*(i/(n-1 if n > 1 else 1)); Y = lambda v: T + (H-T-B)*(1-(v-lo)/(hi-lo))
     seg = ' '.join(f'{X(i):.1f},{Y(v):.1f}' for i, v in enumerate(pts) if v is not None)
@@ -75,10 +75,10 @@ def pagina(p):
     return f'''<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow"><title>Tu panel de seguimiento</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"><style>{G.CSS}{EXTRA}</style></head><body><main>
 <h1>Hola, {esc(p["nombre"])}. Tu panel</h1><p class="sub">Plan {esc(p["version"])} · Actualizado el {esc(p["actualizado"])}.</p>{aviso}
-<section class="card estado"><span class="sub" style="margin:0">Esta semana</span><br><b>{est[0]}</b><p style="margin:6px 0 0">{est[1]}</p></section>
-<h2>Peso</h2><section class="card"><h3>Promedio semanal (kg)</h3>{kp}{linea(pm, et, "kg")}<p class="cap">Miramos la tendencia de varias semanas, no un día suelto: el peso sube y baja por agua y comidas.</p></section>
+<section class="card estado"><span class="sub" style="margin:0">Este control</span><br><b>{est[0]}</b><p style="margin:6px 0 0">{est[1]}</p></section>
+<h2>Peso</h2><section class="card"><h3>Promedio por control (kg)</h3>{kp}{linea(pm, et, "kg")}<p class="cap">Miramos la tendencia entre controles, no un día suelto: el peso sube y baja por agua y comidas.</p></section>
 <h2>Entrenamiento</h2><section class="card"><h3>Sesiones realizadas</h3>{ses}</section>
-<section class="card"><h3>Rendimiento frente a la semana anterior</h3><div class="chips">{rnd}</div></section>
+<section class="card"><h3>Rendimiento frente al control anterior</h3><div class="chips">{rnd}</div></section>
 <h2>Alimentación</h2><section class="card"><h3>Comidas del plan que cumpliste</h3>{adh}</section>
 {sueno}{med}
 <p class="pie">Si algo no se ve o no se entiende, avisame por el chat. Si sentís dolor (no cansancio), frená ese ejercicio y escribime sin esperar al próximo check-in.</p>
