@@ -1,0 +1,33 @@
+# Publica la pagina de un plan cuando la hoja de LR Coaching lo pide (casilla "Plan aprobado").
+# El repositorio es publico: este flujo no imprime nunca los datos que llegan de la hoja.
+name: Publicar plan
+on:
+  repository_dispatch:
+    types: [publicar-plan]
+permissions:
+  contents: write
+concurrency:
+  group: publicar-plan
+  cancel-in-progress: false
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Armar la pagina
+        working-directory: generador
+        env:
+          PAYLOAD: ${{ toJson(github.event.client_payload) }}
+        run: python3 publicar_desde_payload.py > /dev/null
+      - name: Publicar
+        env:
+          CODIGO: ${{ github.event.client_payload.codigo }}
+          VERSION: ${{ github.event.client_payload.version }}
+        run: |
+          git config user.name "LR Coaching (publicacion automatica)"
+          git config user.email "actions@users.noreply.github.com"
+          git add p
+          if git diff --cached --quiet; then echo "Sin cambios para publicar."; exit 0; fi
+          git commit -m "Publicar plan ${CODIGO} V${VERSION}"
+          git pull --rebase origin main
+          git push origin HEAD:main
