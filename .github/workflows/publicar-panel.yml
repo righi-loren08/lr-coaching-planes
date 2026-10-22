@@ -1,0 +1,32 @@
+# Publica el panel de un cliente cuando la hoja de LR Coaching lo pide (casilla "Publicar panel").
+# El repositorio es publico: este flujo no imprime nunca los datos que llegan de la hoja.
+name: Publicar panel
+on:
+  repository_dispatch:
+    types: [publicar-panel]
+permissions:
+  contents: write
+concurrency:
+  group: publicar-pagina
+  cancel-in-progress: false
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Armar el panel
+        working-directory: generador
+        env:
+          PAYLOAD: ${{ toJson(github.event.client_payload) }}
+        run: python3 publicar_panel_desde_payload.py > /dev/null
+      - name: Publicar
+        env:
+          CODIGO: ${{ github.event.client_payload.codigo }}
+        run: |
+          git config user.name "LR Coaching (publicacion automatica)"
+          git config user.email "actions@users.noreply.github.com"
+          git add p
+          if git diff --cached --quiet; then echo "Sin cambios para publicar."; exit 0; fi
+          git commit -m "Publicar panel ${CODIGO} (control nuevo)"
+          git pull --rebase origin main
+          git push origin HEAD:main
