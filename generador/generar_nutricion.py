@@ -26,6 +26,11 @@ def comida(c):
         ops.append(f'<div class="opt">{img}<div class="optt"><span class="optl">Opción {i}</span><p class="plato">{esc(o["plato"])}</p><span class="cifras">≈ {o["kcal"]} kcal · {o["prot"]} g de proteína</span></div></div>')
     return f'<article class="card com"><h3>{esc(c["nombre"])}</h3>{nota}{"".join(ops)}</article>'
 
+def guia(g):
+    items = ''.join(f'<li><b>{esc(i["momento"])}:</b> {esc(i["texto"])}</li>' for i in g['items'])
+    intro = f'<p class="sub" style="margin:0 0 6px">{esc(g["intro"])}</p>' if g.get('intro') else ''
+    return f'<h2>{esc(g["titulo"])}</h2><section class="card">{intro}<ul class="reglas">{items}</ul></section>'
+
 def pagina(p):
     saludo = f'Hola, {esc(p["nombre"])}. ' if p.get('nombre') else ''
     cal0, cal1 = p['calorias']; pr0, pr1 = p['proteina']
@@ -42,6 +47,7 @@ def pagina(p):
 <h2>Tus comidas</h2>
 {"".join(comida(c) for c in p["comidas"])}
 <p class="sub">Las cantidades son aproximadas y las fotos son solo de ejemplo.</p>
+{guia(p["guia"]) if p.get("guia") else ""}
 <h2>Reglas</h2><section class="card"><ul class="reglas">{reglas}</ul></section>
 <h2>Qué registrar</h2><section class="card"><p style="margin:0">Esta semana anotá:</p><ul class="reg">{reg}</ul><p class="sub" style="margin:0">Eso nos dice si el punto de partida está bien o hay que ajustarlo. Un día suelto no cambia nada: miramos la tendencia.</p></section>
 <h2>Próximo paso</h2><p>Nos vemos en la revisión el {esc(p["revision"])}. Si algo no te cierra antes, avisame.</p>

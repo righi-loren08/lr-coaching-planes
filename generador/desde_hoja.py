@@ -3,7 +3,7 @@
 Uso: python3 desde_hoja.py planes.json clientes.json CODIGO [VERSION]
 - planes.json  = valores de Planes!A2:M (lista de filas, columnas A..M).
 - clientes.json = valores de Clientes!A2:F.
-Convencion de Planes: Orden numerico = ejercicio principal; Orden 'cal' = calentamiento del dia
+Convencion de Planes: Orden 'pie' = linea final de la pagina (se escribe en la Nota; no es un dia ni un ejercicio, ponerle el nombre de un dia que ya exista). Orden numerico = ejercicio principal; Orden 'cal' = calentamiento del dia
 (la Nota de la 1ra fila 'cal' del dia es la nota de calentamiento). Columna M = ID de la alternativa.
 Si el cliente no tiene token en Clientes, crea uno nuevo. Imprime JSON con token, ruta y link para guardar en Clientes."""
 import json, sys, secrets
@@ -22,7 +22,11 @@ def main(planes, clientes, codigo, version=None):
     filas = [f for f in planes if celda(f, 0) == codigo and str(celda(f, 2)) == str(version)]
     if not filas: sys.exit(f'Planes no tiene filas de {codigo} version {version}')
     dias = {}
+    nota_final = ''
     for f in filas:
+        if str(celda(f, 4)).strip().lower() == 'pie':  # Orden 'pie': la Nota es una linea final de la pagina
+            nota_final = celda(f, 11).strip()
+            continue
         d = dias.setdefault(celda(f, 3), {'nombre': celda(f, 3), 'ejercicios': []})
         eid = celda(f, 5).strip()
         if eid not in g.EJ: sys.exit(f'ID de ejercicio inexistente: {eid!r} ({celda(f,3)})')
@@ -38,6 +42,7 @@ def main(planes, clientes, codigo, version=None):
         d['ejercicios'].append((float(celda(f, 4) or 0), it))
     plan = {'version': f'V{version}' if str(version).isdigit() else str(version),
             'revision': celda(cli, 5) or 'a definir', 'dias': [], 'codigo': codigo}
+    if nota_final: plan['nota_final'] = nota_final
     nombre = celda(cli, 1).split()[0] if celda(cli, 1) else ''
     if nombre: plan['nombre'] = nombre
     for d in dias.values():
