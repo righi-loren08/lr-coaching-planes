@@ -5,7 +5,7 @@ Uso: python3 generar.py plan.json [token]
 - plan.json: dias y ejercicios del cliente (solo ID de ejercicio + series/reps/RIR/descanso/nota).
 - Salida: ../p/<token>/index.html. El token (largo y aleatorio) es el link privado del cliente.
 Privacidad: la pagina lleva como mucho el primer nombre (campo opcional 'nombre'), nunca datos de salud, y pide que no la indexen los buscadores."""
-import json, re, sys, html, secrets, pathlib
+import json, re, sys, html, secrets, pathlib, unicodedata
 
 AQUI = pathlib.Path(__file__).parent
 EJ = {e['id']: e for e in json.load(open(AQUI/'datos'/'ejercicios.json'))}
@@ -25,12 +25,20 @@ main{max-width:640px;margin:0 auto;padding:20px 16px 48px}h1{font-family:var(--d
 details{margin-top:10px;border-top:1px solid var(--line);padding-top:10px}summary{cursor:pointer;font-weight:600;color:var(--accent);min-height:44px;display:flex;align-items:center}
 .how{margin:8px 0 12px}.cuidado{font-size:.9rem;color:var(--muted);margin:0 0 12px}.video{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:8px;overflow:hidden}
 .video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}.vbtn{min-height:44px;padding:0 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--fg);font:inherit;margin-top:8px}
-.enlace{font-size:.85rem;color:var(--muted);margin:8px 0 0}.enlace a{color:var(--accent)}.altnota{font-size:.9rem;color:var(--muted);margin:8px 0}.altbox{margin-top:12px;border:1px dashed var(--accent);border-radius:8px;padding:10px 12px}.altlab{font:700 .72rem/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}.altn{font-weight:700;margin:6px 0 2px}.altbox details{margin-top:6px;padding-top:0;border-top:0}.sinvideo{font-size:.9rem;color:var(--muted)}.pie{font-size:.85rem;color:var(--muted);margin-top:24px}"""
+.enlace{font-size:.85rem;color:var(--muted);margin:8px 0 0}.enlace a{color:var(--accent)}.altnota{font-size:.9rem;color:var(--muted);margin:8px 0}.altbox{margin-top:12px;border:1px dashed var(--accent);border-radius:8px;padding:10px 12px}.altlab{font:700 .72rem/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}.altn{font-weight:700;margin:6px 0 2px}.altbox details{margin-top:6px;padding-top:0;border-top:0}.sinvideo{font-size:.9rem;color:var(--muted)}.pie{font-size:.85rem;color:var(--muted);margin-top:24px}
+.tabs{display:grid;grid-template-columns:repeat(auto-fit,minmax(60px,1fr));gap:4px;margin:0 0 8px;padding:8px 0;position:sticky;top:0;z-index:5;background:var(--bg)}.tab{min-height:44px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--fg);font:600 .8rem var(--body);padding:0 2px;cursor:pointer}.tab[aria-selected=true]{background:var(--accent);border-color:var(--accent);color:var(--accent-fg)}.js .dia{display:none}.js .dia.on{display:block}.dia{scroll-margin-top:64px}.dia>h2:first-child{margin-top:16px}"""
 
 JS = """(function(){var cur=null;document.querySelectorAll('details.ex-d').forEach(function(d){d.addEventListener('toggle',function(){var box=d.querySelector('.vslot');if(!box)return;
 if(d.open){document.querySelectorAll('.vslot').forEach(function(b){if(b!==box)b.innerHTML=''});
 if(!box.firstChild){var v=box.dataset.v,w=document.createElement('div');w.className='video';var f=document.createElement('iframe');f.src='https://www.youtube-nocookie.com/embed/'+v;f.title=box.dataset.t;f.allow='encrypted-media; picture-in-picture';f.allowFullscreen=true;f.referrerPolicy='strict-origin-when-cross-origin';w.appendChild(f);box.appendChild(w);
-var r=document.createElement('button');r.type='button';r.className='vbtn';r.textContent='↻ Recargar video';r.onclick=function(){f.src=f.src};box.appendChild(r)}}else{box.innerHTML=''}})})})();"""
+var r=document.createElement('button');r.type='button';r.className='vbtn';r.textContent='↻ Recargar video';r.onclick=function(){f.src=f.src};box.appendChild(r)}}else{box.innerHTML=''}})})})();
+(function(){var ts=document.querySelectorAll('.tab');if(!ts.length)return;document.documentElement.classList.add('js');
+function show(id,tope){ts.forEach(function(t){t.setAttribute('aria-selected',t.dataset.t===id?'true':'false')});document.querySelectorAll('.dia').forEach(function(d){d.classList.toggle('on',d.id===id)});
+document.querySelectorAll('.vslot').forEach(function(b){b.innerHTML=''});document.querySelectorAll('details.ex-d[open]').forEach(function(d){d.open=false});
+try{history.replaceState(null,'','#'+id)}catch(e){}if(tope){var n=document.getElementById(id);if(n)n.scrollIntoView()}}
+ts.forEach(function(t){t.addEventListener('click',function(){show(t.dataset.t,true)})});
+var h=location.hash.slice(1),dias=['domingo','lunes','martes','miercoles','jueves','viernes','sabado'],hoy=dias[new Date().getDay()],ini=ts[0].dataset.t;
+ts.forEach(function(t){if(t.dataset.k===hoy)ini=t.dataset.t});if(h&&document.getElementById(h))ini=h;show(ini,false)})();"""
 
 def cuerpo(e):
     vid = yt(e['video'])
@@ -54,14 +62,20 @@ def tarjeta(i, it):
 
 def pagina(plan):
     out = []
-    for d in plan['dias']:
-        out.append(f'<h2>{esc(d["nombre"])}</h2>')
+    tabs = []
+    for n, d in enumerate(plan['dias']):
+        corto = d['nombre'].split(':')[0].strip()
+        clave = ''.join(ch for ch in unicodedata.normalize('NFD', corto.lower()) if unicodedata.category(ch) != 'Mn')
+        tabs.append(f'<button type="button" class="tab" role="tab" data-t="d{n}" data-k="{esc(clave)}" aria-selected="false">{esc(corto)}</button>')
+        out.append(f'<div class="dia" id="d{n}" role="tabpanel"><h2>{esc(d["nombre"])}</h2>')
         c = d.get('calentamiento')
         if c:
             li = ''.join(f'<li>{esc(EJ[x]["nombre"].replace(" (calentamiento)",""))}</li>' for x in c['ejercicios'])
             out.append(f'<section class="card warm"><b>Calentamiento del día</b><p class="sub" style="margin:4px 0 0">{esc(c["nota"])}</p><ol>{li}</ol></section>')
         for i, it in enumerate(d['ejercicios'], 1):
             out.append(tarjeta(i, it))
+        out.append('</div>')
+    nav = f'<nav class="tabs" role="tablist" aria-label="Días de entrenamiento">{"".join(tabs)}</nav>' if len(tabs) > 1 else ''
     saludo = f'Hola, {esc(plan["nombre"])}. ' if plan.get('nombre') else ''
     aviso = f'<p class="aviso">{esc(plan["_aviso"])}</p>' if plan.get('_aviso') else ''
     nut = '<section class="card"><b>Tu plan de nutrición</b><p class="sub" style="margin:4px 0 0">Está en otra página, con el mismo link: <a href="nutricion/" style="color:var(--accent)">abrir el plan de nutrición</a>.</p></section>' if plan.get('nutricion') else ''
@@ -69,7 +83,7 @@ def pagina(plan):
     return f'''<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow"><title>Tu plan de entrenamiento</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"><style>{CSS}</style></head><body><main>
 <h1>{saludo}Tu plan de entrenamiento ({esc(plan["version"])})</h1><p class="sub">Primera revisión: {esc(plan["revision"])}.</p>{aviso}
-{nut}{"".join(out)}
+{nut}{nav}{"".join(out)}
 {final}<p class="pie">Si algo no se ve o no se entiende, avisame por el chat. Si sentís dolor (no cansancio), frená ese ejercicio y escribime.</p>
 </main><script>{JS}</script></body></html>'''
 
