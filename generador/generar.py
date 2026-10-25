@@ -64,11 +64,12 @@ def pagina(plan):
             out.append(tarjeta(i, it))
     saludo = f'Hola, {esc(plan["nombre"])}. ' if plan.get('nombre') else ''
     aviso = f'<p class="aviso">{esc(plan["_aviso"])}</p>' if plan.get('_aviso') else ''
+    nut = '<section class="card"><b>Tu plan de nutrición</b><p class="sub" style="margin:4px 0 0">Está en otra página, con el mismo link: <a href="nutricion/" style="color:var(--accent)">abrir el plan de nutrición</a>.</p></section>' if plan.get('nutricion') else ''
     final = f'<p class="sub">{esc(plan["nota_final"])}</p>' if plan.get('nota_final') else ''
     return f'''<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow"><title>Tu plan de entrenamiento</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"><style>{CSS}</style></head><body><main>
 <h1>{saludo}Tu plan de entrenamiento ({esc(plan["version"])})</h1><p class="sub">Primera revisión: {esc(plan["revision"])}.</p>{aviso}
-{"".join(out)}
+{nut}{"".join(out)}
 {final}<p class="pie">Si algo no se ve o no se entiende, avisame por el chat. Si sentís dolor (no cansancio), frená ese ejercicio y escribime.</p>
 </main><script>{JS}</script></body></html>'''
 

@@ -54,6 +54,7 @@ def main(planes, clientes, codigo, version=None):
             if not it.get('alt'): print('AVISO: sin alternativa en', it['id'], file=sys.stderr)
     dest = g.AQUI.parent / 'p' / token
     dest.mkdir(parents=True, exist_ok=True)
+    if (dest / 'nutricion' / 'index.html').exists(): plan['nutricion'] = True  # enlace a la nutricion bajo el mismo link
     (dest / 'index.html').write_text(g.pagina(plan), encoding='utf-8')
     print(json.dumps({'codigo': codigo, 'token': token, 'ruta': f'p/{token}/index.html', 'link': BASE + token + '/'}))
 
