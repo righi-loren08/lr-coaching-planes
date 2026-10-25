@@ -71,10 +71,10 @@ if __name__ == '__main__':
             if o.get('img') and not (dest/o['img']).exists():
                 print('AVISO: falta la imagen', o['img'])
     # Dia tipo: merienda siempre; el pre-entreno se suma solo los dias de entrenamiento
-    for sufijo, excluye in (('sin entrenar', 'Pre-entreno'), ('dia de entrenamiento', 'zzz')):
+    for sufijo, excluye in (('sin entrenar', 'Pre-entreno'), ('dia de entrenamiento', 'zzzzz')):
         for k in (0, 1):
-            kc = sum(c['opciones'][k]['kcal'] for c in p['comidas'] if not c['nombre'].startswith(excluye))
-            pr = sum(c['opciones'][k]['prot'] for c in p['comidas'] if not c['nombre'].startswith(excluye))
+            kc = sum(c['opciones'][k]['kcal'] for c in p['comidas'] if excluye not in c['nombre'])
+            pr = sum(c['opciones'][k]['prot'] for c in p['comidas'] if excluye not in c['nombre'])
             ok = lo <= kc <= hi and plo <= pr <= phi
             print(f'Dia con la opcion {k+1} ({sufijo}): {kc} kcal, {pr} g proteina', 'OK' if ok else 'FUERA DE RANGO')
     dest.mkdir(parents=True, exist_ok=True)
