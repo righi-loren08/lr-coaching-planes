@@ -18,13 +18,15 @@ EXTRA = """.rango{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px
 .plato{margin:6px 0}.cifras{font:500 .8rem var(--mono);color:var(--muted)}ul.reglas,ul.reg{padding-left:20px;margin:8px 0}ul.reglas li,ul.reg li{margin:6px 0}
 @media(max-width:420px){.opt{flex-direction:column}.opt img{width:100%;max-width:220px}}"""
 
+ETIQ = ['Opción']
 def comida(c):
+    enf = f'<p class="plato" style="margin:0 0 6px"><b>La idea:</b> {esc(c["enfoque"])}</p>' if c.get('enfoque') else ''
     nota = f'<p class="sub" style="margin:0 0 6px">{esc(c["nota"])}</p>' if c.get('nota') else ''
     ops = []
     for i, o in enumerate(c['opciones'], 1):
         img = f'<img src="{esc(o["img"])}" alt="Ejemplo del plato" loading="lazy">' if o.get('img') else ''
-        ops.append(f'<div class="opt">{img}<div class="optt"><span class="optl">Opción {i}</span><p class="plato">{esc(o["plato"])}</p><span class="cifras">≈ {o["kcal"]} kcal · {o["prot"]} g de proteína</span></div></div>')
-    return f'<article class="card com"><h3>{esc(c["nombre"])}</h3>{nota}{"".join(ops)}</article>'
+        ops.append(f'<div class="opt">{img}<div class="optt"><span class="optl">{ETIQ[0]} {i}</span><p class="plato">{esc(o["plato"])}</p><span class="cifras">≈ {o["kcal"]} kcal · {o["prot"]} g de proteína</span></div></div>')
+    return f'<article class="card com"><h3>{esc(c["nombre"])}</h3>{nota}{enf}{"".join(ops)}</article>'
 
 def guia(g):
     items = ''.join(f'<li><b>{esc(i["momento"])}:</b> {esc(i["texto"])}</li>' for i in g['items'])
@@ -56,6 +58,7 @@ def pagina(p):
 
 if __name__ == '__main__':
     p = json.load(open(sys.argv[1])); token = sys.argv[2]
+    ETIQ[0] = p.get('etiqueta', 'Opción')
     assert len(p['reglas']) <= 4, 'maximo 4 reglas'
     lo, hi = (float(x.replace('.', '')) for x in p['calorias']); plo, phi = (float(x) for x in p['proteina'])
     dest = G.AQUI.parent/'p'/token/'nutricion'
