@@ -21,6 +21,7 @@ EXTRA = """.rango{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px
 .chead{display:flex;align-items:center;gap:12px;margin:0 0 10px}.chead .ico{font-size:2rem;line-height:1;background:var(--soft);border-radius:12px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;flex:none}.chead h3{margin:0}.chead small{color:var(--muted);font:500 .8rem var(--mono)}
 .idea{background:var(--soft);border-radius:10px;padding:10px 12px;margin:0 0 8px;font-size:.92rem}.com .sub{font-size:.85rem}
 .cifras b{color:var(--fg)}.op2{margin-top:10px;border-top:1px solid var(--line);padding-top:4px}.op2>summary{min-height:44px}.op2 .opt{border-top:0;margin-top:4px}
+.tl{list-style:none;margin:0;padding:0}.tl li{display:flex;gap:12px;position:relative;padding:0 0 14px}.tl li:not(:last-child)::before{content:'';position:absolute;left:19px;top:42px;bottom:2px;width:2px;background:var(--line)}.tl .td{flex:none;width:40px;height:40px;border-radius:50%;background:var(--soft);display:flex;align-items:center;justify-content:center;font-size:1.2rem}.tl b{display:inline}.tl small{color:var(--muted);font:500 .78rem var(--mono)}.tl p{margin:2px 0 0;font-size:.92rem}
 .rango b{font-size:1.02rem;white-space:nowrap}.rango i{font-style:normal;display:block;font-size:1.4rem;margin:0 0 2px}.reg li::marker{content:'✔ '}"""
 
 ETIQ = ['Opción']
@@ -61,10 +62,20 @@ def comida(c):
     cab = f'<div class="chead"><span class="ico">{emoji(c)}</span><div><h3>{esc(nm.strip())}</h3>' + (f'<small>🕒 {esc(hr.strip())}</small>' if hr.strip() else '') + '</div></div>'
     return f'<article class="card com">{cab}{enf}{nota}{ops[0]}{resto}</article>'
 
+def emoji_momento(m):
+    t = m.lower()
+    for k, e in (('desayuno', '🍳'), ('justo', '⏱️'), ('antes', '⏱️'), ('durante', '💧'), ('despu', '🍚'), ('resto', '🌙')):
+        if k in t: return e
+    return '▫️'
+
 def guia(g):
-    items = ''.join(f'<li><b>{esc(i["momento"])}:</b> {esc(i["texto"])}</li>' for i in g['items'])
-    intro = f'<p class="sub" style="margin:0 0 6px">{esc(g["intro"])}</p>' if g.get('intro') else ''
-    return f'<h2>{esc(g["titulo"])}</h2><section class="card">{intro}<ul class="reglas">{items}</ul></section>'
+    filas = []
+    for i in g['items']:
+        tit, _, det = i['momento'].partition(' · ')
+        d = f' <small>{esc(det)}</small>' if det else ''
+        filas.append(f'<li><span class="td">{emoji_momento(tit)}</span><div><b>{esc(tit)}</b>{d}<p>{esc(i["texto"])}</p></div></li>')
+    intro = f'<p class="sub" style="margin:0 0 10px">{esc(g["intro"])}</p>' if g.get('intro') else ''
+    return f'<h2>{esc(g["titulo"])}</h2><section class="card">{intro}<ol class="tl">{"".join(filas)}</ol></section>'
 
 def pagina(p):
     saludo = f'Hola, {esc(p["nombre"])}. ' if p.get('nombre') else ''

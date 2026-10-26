@@ -25,7 +25,7 @@ main{max-width:640px;margin:0 auto;padding:20px 16px 48px}h1{font-family:var(--d
 details{margin-top:10px;border-top:1px solid var(--line);padding-top:10px}summary{cursor:pointer;font-weight:600;color:var(--accent);min-height:44px;display:flex;align-items:center}
 .how{margin:8px 0 12px}.cuidado{font-size:.9rem;color:var(--muted);margin:0 0 12px}.video{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:8px;overflow:hidden}
 .video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}.vbtn{min-height:44px;padding:0 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--fg);font:inherit;margin-top:8px}
-.enlace{font-size:.85rem;color:var(--muted);margin:8px 0 0}.enlace a{color:var(--accent)}.altnota{font-size:.9rem;color:var(--muted);margin:8px 0}.altbox{margin-top:12px;border:1px dashed var(--accent);border-radius:8px;padding:10px 12px}.altlab{font:700 .72rem/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}.altn{font-weight:700;margin:6px 0 2px}.altbox details{margin-top:6px;padding-top:0;border-top:0}.sinvideo{font-size:.9rem;color:var(--muted)}.pie{font-size:.85rem;color:var(--muted);margin-top:24px}
+.enlace{font-size:.85rem;color:var(--muted);margin:8px 0 0}.enlace a{color:var(--accent)}.altnota{font-size:.9rem;color:var(--muted);margin:8px 0}.altw{margin-top:10px}.altbox{margin-top:8px;border:1px dashed var(--accent);border-radius:8px;padding:10px 12px}.altlab{font:700 .72rem/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}.altn{font-weight:700;margin:6px 0 2px}.altbox details{margin-top:6px;padding-top:0;border-top:0}.sinvideo{font-size:.9rem;color:var(--muted)}.pie{font-size:.85rem;color:var(--muted);margin-top:24px}
 .tabs{display:grid;grid-template-columns:repeat(auto-fit,minmax(60px,1fr));gap:4px;margin:0 0 8px;padding:8px 0;position:sticky;top:0;z-index:5;background:var(--bg)}.tab{min-height:44px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--fg);font:600 .8rem var(--body);padding:0 2px;cursor:pointer}.tab[aria-selected=true]{background:var(--accent);border-color:var(--accent);color:var(--accent-fg)}.js .dia{display:none}.js .dia.on{display:block}.dia{scroll-margin-top:64px}.dia>h2:first-child{margin-top:16px}
 .mods{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:0 0 14px}.mods a,.mods span{display:flex;align-items:center;justify-content:center;gap:6px;min-height:44px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--fg);font:700 .85rem var(--body);text-decoration:none}.mods .on{background:var(--accent);border-color:var(--accent);color:var(--accent-fg)}"""
 
@@ -33,9 +33,10 @@ JS = """(function(){var cur=null;document.querySelectorAll('details.ex-d').forEa
 if(d.open){document.querySelectorAll('.vslot').forEach(function(b){if(b!==box)b.innerHTML=''});
 if(!box.firstChild){var v=box.dataset.v,w=document.createElement('div');w.className='video';var f=document.createElement('iframe');f.src='https://www.youtube-nocookie.com/embed/'+v;f.title=box.dataset.t;f.allow='encrypted-media; picture-in-picture';f.allowFullscreen=true;f.referrerPolicy='strict-origin-when-cross-origin';w.appendChild(f);box.appendChild(w);
 var r=document.createElement('button');r.type='button';r.className='vbtn';r.textContent='↻ Recargar video';r.onclick=function(){f.src=f.src};box.appendChild(r)}}else{box.innerHTML=''}})})})();
+document.querySelectorAll('details.altw').forEach(function(d){d.addEventListener('toggle',function(){if(!d.open){d.querySelectorAll('.vslot').forEach(function(b){b.innerHTML=''});d.querySelectorAll('details.ex-d[open]').forEach(function(x){x.open=false})}})});
 (function(){var ts=document.querySelectorAll('.tab');if(!ts.length)return;document.documentElement.classList.add('js');
 function show(id,tope){ts.forEach(function(t){t.setAttribute('aria-selected',t.dataset.t===id?'true':'false')});document.querySelectorAll('.dia').forEach(function(d){d.classList.toggle('on',d.id===id)});
-document.querySelectorAll('.vslot').forEach(function(b){b.innerHTML=''});document.querySelectorAll('details.ex-d[open]').forEach(function(d){d.open=false});
+document.querySelectorAll('.vslot').forEach(function(b){b.innerHTML=''});document.querySelectorAll('details.ex-d[open],details.altw[open]').forEach(function(d){d.open=false});
 try{history.replaceState(null,'','#'+id)}catch(e){}if(tope){var n=document.getElementById(id);if(n)n.scrollIntoView()}}
 ts.forEach(function(t){t.addEventListener('click',function(){show(t.dataset.t,true)})});
 var h=location.hash.slice(1),dias=['domingo','lunes','martes','miercoles','jueves','viernes','sabado'],hoy=dias[new Date().getDay()],ini=ts[0].dataset.t;
@@ -55,7 +56,7 @@ def tarjeta(i, it):
     alt = ''
     if it.get('alt'):
         a = EJ[it['alt']]
-        alt = f'''<div class="altbox"><span class="altlab">Opción 2 · misma zona</span><p class="altn">{esc(a["nombre"])}</p><p class="altnota">Usala si no tenés esta máquina o está ocupada. Mismas series, repeticiones y descanso.</p><details class="ex-d alt"><summary>Cómo se hace y video</summary>{cuerpo(a)}</details></div>'''
+        alt = f'''<details class="altw"><summary>¿No tenés esta máquina? Mirá la opción 2</summary><div class="altbox"><span class="altlab">Opción 2 · misma zona</span><p class="altn">{esc(a["nombre"])}</p><p class="altnota">Usala si no tenés esta máquina o está ocupada. Mismas series, repeticiones y descanso.</p><details class="ex-d alt"><summary>Cómo se hace y video</summary>{cuerpo(a)}</details></div></details>'''
     return f'''<article class="card ex"><h3>{i}. {esc(e["nombre"])}</h3>
 <div class="meta"><div><b>{esc(it["series"])} × {esc(it["reps"])}</b><span>Series</span></div><div><b>{esc(it["rir"])}</b><span>Esfuerzo</span></div><div><b>{esc(it["descanso"])}</b><span>Descanso</span></div></div>
 {nota}
