@@ -1,15 +1,20 @@
 #!/usr/bin/env python3
 """Publica el panel de seguimiento de un cliente a partir del aviso que manda la hoja (repository_dispatch).
-Lee el JSON de la variable de entorno PAYLOAD (no se imprime nunca: el repositorio es publico).
+Lee el aviso del archivo del evento (GITHUB_EVENT_PATH), no de una variable de entorno: GitHub muestra las variables en el registro
+y el repositorio es publico. Tambien acepta PAYLOAD (pruebas locales).
 Campos: codigo, token, version, nombre (solo primer nombre), estado (mantener|investigar|ajustar, el que confirmo Lorenzo),
 objetivo (opcional), dias (texto JSON: nombres de los dias del plan vigente), encabezado y filas (texto JSON: SOLO las columnas
 que muestra el panel de la pestaña de respuestas; nunca molestias, comentarios ni cargas)."""
 import json, os, re, sys
 import generar as G, generar_panel as P, panel_desde_hoja as H
 
+def leer_aviso():
+    if os.environ.get('PAYLOAD'): return json.loads(os.environ['PAYLOAD'])
+    with open(os.environ['GITHUB_EVENT_PATH'], encoding='utf-8') as f: return json.load(f)['client_payload']
+
 def main():
     try:
-        p = json.loads(os.environ['PAYLOAD'])
+        p = leer_aviso()
         codigo, token, version = str(p['codigo']), str(p['token']), str(p['version'])
         nombre, estado, objetivo = str(p['nombre']).strip(), str(p['estado']).strip().lower(), str(p.get('objetivo', '')).strip()
         dias = json.loads(p['dias']) if isinstance(p['dias'], str) else p['dias']

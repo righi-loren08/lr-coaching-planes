@@ -1,5 +1,6 @@
 # Publica el panel de un cliente cuando la hoja de LR Coaching lo pide (casilla "Publicar panel").
-# El repositorio es publico: este flujo no imprime nunca los datos que llegan de la hoja.
+# El repositorio es publico: los datos de la hoja se leen del archivo del evento (no de variables de entorno,
+# que GitHub muestra en el registro de la ejecucion) y nunca se imprimen.
 name: Publicar panel
 on:
   repository_dispatch:
@@ -16,8 +17,6 @@ jobs:
       - uses: actions/checkout@v4
       - name: Armar el panel
         working-directory: generador
-        env:
-          PAYLOAD: ${{ toJson(github.event.client_payload) }}
         run: python3 publicar_panel_desde_payload.py > /dev/null
       - name: Publicar
         env:
