@@ -8,7 +8,7 @@ Cada fila: [tipo, D, E, F, G, H] (ya filtradas por codigo y version). Tipos:
   registrar     D = texto
   etiqueta      D = palabra que encabeza cada opcion (por defecto "Opción")
   comida        D = nombre (con horario), E = nota, F = la idea (enfoque)
-  opcion        D = plato en medidas caseras, G = kcal, H = proteina (g); pertenece a la ultima comida
+  opcion        D = plato en medidas caseras, E = imagen opcional (ej. img/desayuno-1.jpg, ya subida a p/<token>/nutricion/img/), G = kcal, H = proteina (g); pertenece a la ultima comida
   guia_titulo / guia_intro   D = texto (guia opcional, ej. dia de partido)
   guia_item     D = momento, E = texto
 El orden de las filas es el orden de la pagina. Devuelve los avisos (lista de textos) y escribe p/<token>/nutricion/index.html."""
@@ -32,7 +32,11 @@ def armar(filas, nombre, version, revision):
         elif t == 'opcion':
             if not p['comidas']: raise SystemExit('Nutricion: una opcion aparece antes de la primera comida.')
             try:
-                p['comidas'][-1]['opciones'].append({'plato': c(f, 1), 'kcal': int(float(c(f, 4).replace(',', '.'))), 'prot': int(float(c(f, 5).replace(',', '.')))})
+                op = {'plato': c(f, 1), 'kcal': int(float(c(f, 4).replace(',', '.'))), 'prot': int(float(c(f, 5).replace(',', '.')))}
+                if c(f, 2):
+                    if not re.fullmatch(r'img/[A-Za-z0-9_.-]{1,60}', c(f, 2)): raise SystemExit('Nutricion: nombre de imagen no valido.')
+                    op['img'] = c(f, 2)
+                p['comidas'][-1]['opciones'].append(op)
             except ValueError:
                 raise SystemExit('Nutricion: kcal o proteina no son numeros en "' + c(f, 1)[:30] + '".')
         elif t == 'guia_titulo': guia['titulo'] = c(f, 1)
