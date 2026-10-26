@@ -26,7 +26,8 @@ details{margin-top:10px;border-top:1px solid var(--line);padding-top:10px}summar
 .how{margin:8px 0 12px}.cuidado{font-size:.9rem;color:var(--muted);margin:0 0 12px}.video{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:8px;overflow:hidden}
 .video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}.vbtn{min-height:44px;padding:0 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--fg);font:inherit;margin-top:8px}
 .enlace{font-size:.85rem;color:var(--muted);margin:8px 0 0}.enlace a{color:var(--accent)}.altnota{font-size:.9rem;color:var(--muted);margin:8px 0}.altbox{margin-top:12px;border:1px dashed var(--accent);border-radius:8px;padding:10px 12px}.altlab{font:700 .72rem/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}.altn{font-weight:700;margin:6px 0 2px}.altbox details{margin-top:6px;padding-top:0;border-top:0}.sinvideo{font-size:.9rem;color:var(--muted)}.pie{font-size:.85rem;color:var(--muted);margin-top:24px}
-.tabs{display:grid;grid-template-columns:repeat(auto-fit,minmax(60px,1fr));gap:4px;margin:0 0 8px;padding:8px 0;position:sticky;top:0;z-index:5;background:var(--bg)}.tab{min-height:44px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--fg);font:600 .8rem var(--body);padding:0 2px;cursor:pointer}.tab[aria-selected=true]{background:var(--accent);border-color:var(--accent);color:var(--accent-fg)}.js .dia{display:none}.js .dia.on{display:block}.dia{scroll-margin-top:64px}.dia>h2:first-child{margin-top:16px}"""
+.tabs{display:grid;grid-template-columns:repeat(auto-fit,minmax(60px,1fr));gap:4px;margin:0 0 8px;padding:8px 0;position:sticky;top:0;z-index:5;background:var(--bg)}.tab{min-height:44px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--fg);font:600 .8rem var(--body);padding:0 2px;cursor:pointer}.tab[aria-selected=true]{background:var(--accent);border-color:var(--accent);color:var(--accent-fg)}.js .dia{display:none}.js .dia.on{display:block}.dia{scroll-margin-top:64px}.dia>h2:first-child{margin-top:16px}
+.mods{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:0 0 14px}.mods a,.mods span{display:flex;align-items:center;justify-content:center;gap:6px;min-height:44px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--fg);font:700 .85rem var(--body);text-decoration:none}.mods .on{background:var(--accent);border-color:var(--accent);color:var(--accent-fg)}"""
 
 JS = """(function(){var cur=null;document.querySelectorAll('details.ex-d').forEach(function(d){d.addEventListener('toggle',function(){var box=d.querySelector('.vslot');if(!box)return;
 if(d.open){document.querySelectorAll('.vslot').forEach(function(b){if(b!==box)b.innerHTML=''});
@@ -57,8 +58,8 @@ def tarjeta(i, it):
         alt = f'''<div class="altbox"><span class="altlab">Opción 2 · misma zona</span><p class="altn">{esc(a["nombre"])}</p><p class="altnota">Usala si no tenés esta máquina o está ocupada. Mismas series, repeticiones y descanso.</p><details class="ex-d alt"><summary>Cómo se hace y video</summary>{cuerpo(a)}</details></div>'''
     return f'''<article class="card ex"><h3>{i}. {esc(e["nombre"])}</h3>
 <div class="meta"><div><b>{esc(it["series"])} × {esc(it["reps"])}</b><span>Series</span></div><div><b>{esc(it["rir"])}</b><span>Esfuerzo</span></div><div><b>{esc(it["descanso"])}</b><span>Descanso</span></div></div>
-{nota}<p class="why">{esc(e["por_que"])}</p>
-<details class="ex-d"><summary>Cómo se hace y video</summary>{cuerpo(e)}</details>{alt}</article>'''
+{nota}
+<details class="ex-d"><summary>Cómo se hace y video</summary><p class="why">{esc(e["por_que"])}</p>{cuerpo(e)}</details>{alt}</article>'''
 
 def pagina(plan):
     out = []
@@ -78,7 +79,7 @@ def pagina(plan):
     nav = f'<nav class="tabs" role="tablist" aria-label="Días de entrenamiento">{"".join(tabs)}</nav>' if len(tabs) > 1 else ''
     saludo = f'Hola, {esc(plan["nombre"])}. ' if plan.get('nombre') else ''
     aviso = f'<p class="aviso">{esc(plan["_aviso"])}</p>' if plan.get('_aviso') else ''
-    nut = '<section class="card"><b>Tu plan de nutrición</b><p class="sub" style="margin:4px 0 0">Está en otra página, con el mismo link: <a href="nutricion/" style="color:var(--accent)">abrir el plan de nutrición</a>.</p></section>' if plan.get('nutricion') else ''
+    nut = '<nav class="mods" aria-label="Tu plan"><span class="on">🏋️ Entrenamiento</span><a href="nutricion/">🍽️ Nutrición</a></nav>' if plan.get('nutricion') else ''
     final = f'<p class="sub">{esc(plan["nota_final"])}</p>' if plan.get('nota_final') else ''
     return f'''<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow"><title>Tu plan de entrenamiento</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"><style>{CSS}</style></head><body><main>

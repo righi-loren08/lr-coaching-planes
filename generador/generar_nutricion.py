@@ -17,7 +17,11 @@ EXTRA = """.rango{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px
 .opt:first-of-type{border-top:0}.opt img{width:132px;height:auto;border-radius:8px;flex:none;background:var(--soft)}.optt{min-width:0}.optl{font:700 .72rem/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
 .plato{margin:6px 0}.cifras{font:500 .8rem var(--mono);color:var(--muted)}ul.reglas,ul.reg{padding-left:20px;margin:8px 0}ul.reglas li,ul.reg li{margin:6px 0}
 @media(max-width:420px){.opt{flex-direction:column}.opt img{width:100%;max-width:220px}}
-.tabs.nut{grid-template-columns:repeat(auto-fit,minmax(78px,1fr))}.tabs.nut .tab{line-height:1.1;padding:4px 3px}.dia{scroll-margin-top:124px}.tabs.nut .tab{min-height:40px}"""
+.tabs.nut{grid-template-columns:repeat(auto-fit,minmax(78px,1fr))}.tabs.nut .tab{line-height:1.1;padding:4px 3px}.tabs.nut{position:static;grid-template-columns:repeat(3,1fr);gap:6px;padding:0;margin:0 0 12px}.tabs.nut .tab{min-height:62px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:.78rem}.tab .ti{font-size:1.4rem;line-height:1}
+.chead{display:flex;align-items:center;gap:12px;margin:0 0 10px}.chead .ico{font-size:2rem;line-height:1;background:var(--soft);border-radius:12px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;flex:none}.chead h3{margin:0}.chead small{color:var(--muted);font:500 .8rem var(--mono)}
+.idea{background:var(--soft);border-radius:10px;padding:10px 12px;margin:0 0 8px;font-size:.92rem}.com .sub{font-size:.85rem}
+.cifras b{color:var(--fg)}.op2{margin-top:10px;border-top:1px solid var(--line);padding-top:4px}.op2>summary{min-height:44px}.op2 .opt{border-top:0;margin-top:4px}
+.rango b{font-size:1.02rem;white-space:nowrap}.rango i{font-style:normal;display:block;font-size:1.4rem;margin:0 0 2px}.reg li::marker{content:'✔ '}"""
 
 ETIQ = ['Opción']
 import re, unicodedata
@@ -32,21 +36,30 @@ def hora(c):
     m = re.match(r'\s*(\d{1,2}):(\d{2})', c['nombre'])
     return str(int(m.group(1)) * 60 + int(m.group(2))) if m else ''
 
+def emoji(c):
+    n = (c.get('corto') or c['nombre']).lower()
+    for k, e in (('pre', '🍌'), ('desayuno', '🍳'), ('media', '🍎'), ('colaci', '🍎'), ('almuerzo', '🍛'), ('merienda', '🥪'), ('cena', '🍽️'), ('club', '⚡'), ('gym', '⚡')):
+        if k in n: return e
+    return '🍴'
+
 NJS = """(function(){var ts=document.querySelectorAll('.tab');if(!ts.length)return;document.documentElement.classList.add('js');
 function show(id,tope){ts.forEach(function(t){t.setAttribute('aria-selected',t.dataset.t===id?'true':'false')});document.querySelectorAll('.dia').forEach(function(d){d.classList.toggle('on',d.id===id)});
 try{history.replaceState(null,'','#'+id)}catch(e){}if(tope){var n=document.getElementById(id);if(n)n.scrollIntoView()}}
-ts.forEach(function(t){t.addEventListener('click',function(){show(t.dataset.t,true)})});
+ts.forEach(function(t){t.addEventListener('click',function(){show(t.dataset.t,false)})});
 var h=location.hash.slice(1),ini=ts[0].dataset.t,now=new Date(),m=now.getHours()*60+now.getMinutes(),ok=false;
 ts.forEach(function(t){var x=t.dataset.h;if(!ok&&x!==''&&x!==undefined&&+x>=m-30){ini=t.dataset.t;ok=true}});
 if(h&&document.getElementById(h))ini=h;show(ini,false)})();"""
 def comida(c):
-    enf = f'<p class="plato" style="margin:0 0 6px"><b>La idea:</b> {esc(c["enfoque"])}</p>' if c.get('enfoque') else ''
-    nota = f'<p class="sub" style="margin:0 0 6px">{esc(c["nota"])}</p>' if c.get('nota') else ''
+    hr, _, nm = c['nombre'].partition('·') if '·' in c['nombre'] else ('', '', c['nombre'])
+    enf = f'<p class="idea">💡 <b>La idea:</b> {esc(c["enfoque"])}</p>' if c.get('enfoque') else ''
+    nota = f'<p class="sub" style="margin:0 0 8px">{esc(c["nota"])}</p>' if c.get('nota') else ''
     ops = []
     for i, o in enumerate(c['opciones'], 1):
         img = f'<img src="{esc(o["img"])}" alt="Ejemplo del plato" loading="lazy">' if o.get('img') else ''
-        ops.append(f'<div class="opt">{img}<div class="optt"><span class="optl">{ETIQ[0]} {i}</span><p class="plato">{esc(o["plato"])}</p><span class="cifras">≈ {o["kcal"]} kcal · {o["prot"]} g de proteína</span></div></div>')
-    return f'<article class="card com"><h3>{esc(c["nombre"])}</h3>{nota}{enf}{"".join(ops)}</article>'
+        ops.append(f'<div class="opt">{img}<div class="optt"><span class="optl">{ETIQ[0]} {i}</span><p class="plato">{esc(o["plato"])}</p><span class="cifras">🔥 <b>{o["kcal"]}</b> kcal · 💪 <b>{o["prot"]}</b> g de proteína</span></div></div>')
+    resto = f'<details class="op2"><summary>Ver otra opción</summary>{"".join(ops[1:])}</details>' if len(ops) > 1 else ''
+    cab = f'<div class="chead"><span class="ico">{emoji(c)}</span><div><h3>{esc(nm.strip())}</h3>' + (f'<small>🕒 {esc(hr.strip())}</small>' if hr.strip() else '') + '</div></div>'
+    return f'<article class="card com">{cab}{enf}{nota}{ops[0]}{resto}</article>'
 
 def guia(g):
     items = ''.join(f'<li><b>{esc(i["momento"])}:</b> {esc(i["texto"])}</li>' for i in g['items'])
@@ -61,21 +74,22 @@ def pagina(p):
     aviso = f'<p class="aviso">{esc(p["_aviso"])}</p>' if p.get('_aviso') else ''
     tabs, paneles = [], []
     for n, c in enumerate(p['comidas']):
-        tabs.append(f'<button type="button" class="tab" role="tab" data-t="m{n}" data-h="{hora(c)}" aria-selected="false">{esc(corto(c))}</button>')
+        tabs.append(f'<button type="button" class="tab" role="tab" data-t="m{n}" data-h="{hora(c)}" aria-selected="false"><span class="ti">{emoji(c)}</span>{esc(corto(c))}</button>')
         paneles.append(f'<div class="dia" id="m{n}" role="tabpanel">{comida(c)}</div>')
     if p.get('guia'):
-        tabs.append(f'<button type="button" class="tab" role="tab" data-t="mg" data-h="" aria-selected="false">{esc(p["guia"].get("corto") or p["guia"]["titulo"])}</button>')
+        tabs.append(f'<button type="button" class="tab" role="tab" data-t="mg" data-h="" aria-selected="false"><span class="ti">⚽</span>{esc(p["guia"].get("corto") or p["guia"]["titulo"])}</button>')
         paneles.append(f'<div class="dia" id="mg" role="tabpanel">{guia(p["guia"])}</div>')
-    tabs.append('<button type="button" class="tab" role="tab" data-t="mr" data-h="" aria-selected="false">Reglas</button>')
+    tabs.append('<button type="button" class="tab" role="tab" data-t="mr" data-h="" aria-selected="false"><span class="ti">📋</span>Reglas</button>')
     paneles.append(f'<div class="dia" id="mr" role="tabpanel"><h2>Reglas</h2><section class="card"><ul class="reglas">{reglas}</ul></section></div>')
     nav = f'<nav class="tabs nut" role="tablist" aria-label="Comidas">{"".join(tabs)}</nav>'
     return f'''<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow"><title>Tu plan de nutrición</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"><style>{G.CSS}{EXTRA}</style></head><body><main>
-<h1>{saludo}Tu plan de nutrición ({esc(p["version"])})</h1><p class="sub">Primera revisión: {esc(p["revision"])}. <a href="../" style="color:var(--accent)">Ver tu plan de entrenamiento</a>.</p>{aviso}
+<h1>{saludo}Tu plan de nutrición ({esc(p["version"])})</h1><p class="sub">Primera revisión: {esc(p["revision"])}.</p>{aviso}
+<nav class="mods" aria-label="Tu plan"><a href="../">🏋️ Entrenamiento</a><span class="on">🍽️ Nutrición</span></nav>
 <h2>Tu punto de partida</h2>
 <section class="card"><p style="margin:0">Para {esc(p["objetivo"])}, te propongo arrancar con:</p>
-<div class="rango"><div><b>{cal0} a {cal1}</b><span>Calorías por día</span></div><div><b>{pr0} a {pr1} g</b><span>Proteína por día</span></div></div>
-<p class="sub" style="margin:0">Es un punto de partida, no una cifra exacta: lo ajustamos con tu peso y cómo te sentís. No hace falta contar nada al detalle: los platos de abajo ya están pensados para que llegues.</p></section>
+<div class="rango"><div><i>🔥</i><b>{cal0} a {cal1}</b><span>Calorías por día</span></div><div><i>💪</i><b>{pr0} a {pr1} g</b><span>Proteína por día</span></div></div>
+<p class="sub" style="margin:0">Es un punto de partida: lo ajustamos con tu peso y cómo te sentís. No hace falta contar nada, los platos ya están pensados para que llegues.</p></section>
 <h2>Tus comidas</h2>
 {nav}{"".join(paneles)}
 <p class="sub">Las cantidades son aproximadas y las fotos son solo de ejemplo.</p>
