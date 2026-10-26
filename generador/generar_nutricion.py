@@ -16,9 +16,29 @@ EXTRA = """.rango{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px
 .com h3{margin:0 0 4px;font-size:1.05rem}.opt{display:flex;gap:12px;align-items:flex-start;margin:12px 0 0;padding-top:12px;border-top:1px solid var(--line)}
 .opt:first-of-type{border-top:0}.opt img{width:132px;height:auto;border-radius:8px;flex:none;background:var(--soft)}.optt{min-width:0}.optl{font:700 .72rem/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
 .plato{margin:6px 0}.cifras{font:500 .8rem var(--mono);color:var(--muted)}ul.reglas,ul.reg{padding-left:20px;margin:8px 0}ul.reglas li,ul.reg li{margin:6px 0}
-@media(max-width:420px){.opt{flex-direction:column}.opt img{width:100%;max-width:220px}}"""
+@media(max-width:420px){.opt{flex-direction:column}.opt img{width:100%;max-width:220px}}
+.tabs.nut{grid-template-columns:repeat(auto-fit,minmax(78px,1fr))}.tabs.nut .tab{line-height:1.1;padding:4px 3px}.dia{scroll-margin-top:124px}.tabs.nut .tab{min-height:40px}"""
 
 ETIQ = ['Opción']
+import re, unicodedata
+
+def corto(c):
+    """Nombre corto para el boton: el campo 'corto' si existe; si no, lo que va despues de ' · ' sin parentesis."""
+    if c.get('corto'): return c['corto']
+    n = c['nombre'].split('·', 1)[-1].strip()
+    return re.sub(r'\s*\(.*?\)', '', n).strip() or c['nombre']
+
+def hora(c):
+    m = re.match(r'\s*(\d{1,2}):(\d{2})', c['nombre'])
+    return str(int(m.group(1)) * 60 + int(m.group(2))) if m else ''
+
+NJS = """(function(){var ts=document.querySelectorAll('.tab');if(!ts.length)return;document.documentElement.classList.add('js');
+function show(id,tope){ts.forEach(function(t){t.setAttribute('aria-selected',t.dataset.t===id?'true':'false')});document.querySelectorAll('.dia').forEach(function(d){d.classList.toggle('on',d.id===id)});
+try{history.replaceState(null,'','#'+id)}catch(e){}if(tope){var n=document.getElementById(id);if(n)n.scrollIntoView()}}
+ts.forEach(function(t){t.addEventListener('click',function(){show(t.dataset.t,true)})});
+var h=location.hash.slice(1),ini=ts[0].dataset.t,now=new Date(),m=now.getHours()*60+now.getMinutes(),ok=false;
+ts.forEach(function(t){var x=t.dataset.h;if(!ok&&x!==''&&x!==undefined&&+x>=m-30){ini=t.dataset.t;ok=true}});
+if(h&&document.getElementById(h))ini=h;show(ini,false)})();"""
 def comida(c):
     enf = f'<p class="plato" style="margin:0 0 6px"><b>La idea:</b> {esc(c["enfoque"])}</p>' if c.get('enfoque') else ''
     nota = f'<p class="sub" style="margin:0 0 6px">{esc(c["nota"])}</p>' if c.get('nota') else ''
@@ -39,6 +59,16 @@ def pagina(p):
     reglas = ''.join(f'<li>{esc(r)}</li>' for r in p['reglas'])
     reg = ''.join(f'<li>{esc(r)}</li>' for r in p['registrar'])
     aviso = f'<p class="aviso">{esc(p["_aviso"])}</p>' if p.get('_aviso') else ''
+    tabs, paneles = [], []
+    for n, c in enumerate(p['comidas']):
+        tabs.append(f'<button type="button" class="tab" role="tab" data-t="m{n}" data-h="{hora(c)}" aria-selected="false">{esc(corto(c))}</button>')
+        paneles.append(f'<div class="dia" id="m{n}" role="tabpanel">{comida(c)}</div>')
+    if p.get('guia'):
+        tabs.append(f'<button type="button" class="tab" role="tab" data-t="mg" data-h="" aria-selected="false">{esc(p["guia"].get("corto") or p["guia"]["titulo"])}</button>')
+        paneles.append(f'<div class="dia" id="mg" role="tabpanel">{guia(p["guia"])}</div>')
+    tabs.append('<button type="button" class="tab" role="tab" data-t="mr" data-h="" aria-selected="false">Reglas</button>')
+    paneles.append(f'<div class="dia" id="mr" role="tabpanel"><h2>Reglas</h2><section class="card"><ul class="reglas">{reglas}</ul></section></div>')
+    nav = f'<nav class="tabs nut" role="tablist" aria-label="Comidas">{"".join(tabs)}</nav>'
     return f'''<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow"><title>Tu plan de nutrición</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"><style>{G.CSS}{EXTRA}</style></head><body><main>
 <h1>{saludo}Tu plan de nutrición ({esc(p["version"])})</h1><p class="sub">Primera revisión: {esc(p["revision"])}. <a href="../" style="color:var(--accent)">Ver tu plan de entrenamiento</a>.</p>{aviso}
@@ -47,14 +77,12 @@ def pagina(p):
 <div class="rango"><div><b>{cal0} a {cal1}</b><span>Calorías por día</span></div><div><b>{pr0} a {pr1} g</b><span>Proteína por día</span></div></div>
 <p class="sub" style="margin:0">Es un punto de partida, no una cifra exacta: lo ajustamos con tu peso y cómo te sentís. No hace falta contar nada al detalle: los platos de abajo ya están pensados para que llegues.</p></section>
 <h2>Tus comidas</h2>
-{"".join(comida(c) for c in p["comidas"])}
+{nav}{"".join(paneles)}
 <p class="sub">Las cantidades son aproximadas y las fotos son solo de ejemplo.</p>
-{guia(p["guia"]) if p.get("guia") else ""}
-<h2>Reglas</h2><section class="card"><ul class="reglas">{reglas}</ul></section>
 <h2>Qué registrar</h2><section class="card"><p style="margin:0">Esta semana anotá:</p><ul class="reg">{reg}</ul><p class="sub" style="margin:0">Eso nos dice si el punto de partida está bien o hay que ajustarlo. Un día suelto no cambia nada: miramos la tendencia.</p></section>
 <h2>Próximo paso</h2><p>Nos vemos en la revisión el {esc(p["revision"])}. Si algo no te cierra antes, avisame.</p>
 <p class="pie">Si algo no se ve o no se entiende, avisame por el chat.</p>
-</main></body></html>'''
+</main><script>{NJS}</script></body></html>'''
 
 if __name__ == '__main__':
     p = json.load(open(sys.argv[1])); token = sys.argv[2]

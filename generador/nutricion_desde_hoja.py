@@ -7,9 +7,9 @@ Cada fila: [tipo, D, E, F, G, H] (ya filtradas por codigo y version). Tipos:
   regla         D = texto (maximo 4)
   registrar     D = texto
   etiqueta      D = palabra que encabeza cada opcion (por defecto "Opción")
-  comida        D = nombre (con horario), E = nota, F = la idea (enfoque)
+  comida        D = nombre (con horario), E = nota, F = la idea (enfoque), G = nombre corto para el boton (opcional)
   opcion        D = plato en medidas caseras, E = imagen opcional (ej. img/desayuno-1.jpg, ya subida a p/<token>/nutricion/img/), G = kcal, H = proteina (g); pertenece a la ultima comida
-  guia_titulo / guia_intro   D = texto (guia opcional, ej. dia de partido)
+  guia_titulo / guia_intro   D = texto (guia opcional, ej. dia de partido); en guia_titulo, E = nombre corto para el boton (opcional)
   guia_item     D = momento, E = texto
 El orden de las filas es el orden de la pagina. Devuelve los avisos (lista de textos) y escribe p/<token>/nutricion/index.html."""
 import re
@@ -28,7 +28,7 @@ def armar(filas, nombre, version, revision):
         elif t == 'regla': p['reglas'].append(c(f, 1))
         elif t == 'registrar': p['registrar'].append(c(f, 1))
         elif t == 'etiqueta': p['etiqueta'] = c(f, 1)
-        elif t == 'comida': p['comidas'].append({'nombre': c(f, 1), 'nota': c(f, 2), 'enfoque': c(f, 3), 'opciones': []})
+        elif t == 'comida': p['comidas'].append({'nombre': c(f, 1), 'nota': c(f, 2), 'enfoque': c(f, 3), 'corto': c(f, 4), 'opciones': []})
         elif t == 'opcion':
             if not p['comidas']: raise SystemExit('Nutricion: una opcion aparece antes de la primera comida.')
             try:
@@ -39,7 +39,7 @@ def armar(filas, nombre, version, revision):
                 p['comidas'][-1]['opciones'].append(op)
             except ValueError:
                 raise SystemExit('Nutricion: kcal o proteina no son numeros en "' + c(f, 1)[:30] + '".')
-        elif t == 'guia_titulo': guia['titulo'] = c(f, 1)
+        elif t == 'guia_titulo': guia['titulo'] = c(f, 1); guia['corto'] = c(f, 2)
         elif t == 'guia_intro': guia['intro'] = c(f, 1)
         elif t == 'guia_item': guia['items'].append({'momento': c(f, 1), 'texto': c(f, 2)})
         elif t: raise SystemExit('Nutricion: tipo de fila desconocido: ' + t)
