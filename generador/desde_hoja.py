@@ -9,6 +9,7 @@ Si el cliente no tiene token en Clientes, crea uno nuevo. Imprime JSON con token
 import json, sys, secrets
 import generar as g
 
+MATERIAL_CASA = 'una mesa robusta, una silla o banco, una mochila con peso, una toalla y botellas o garrafas con agua'
 BASE = 'https://righi-loren08.github.io/lr-coaching-planes/p/'
 
 def celda(f, i): return (f[i] if i < len(f) else '') or ''
@@ -47,8 +48,13 @@ def main(planes, clientes, codigo, version=None):
     if nombre: plan['nombre'] = nombre
     for d in dias.values():
         d['ejercicios'] = [it for _, it in sorted(d['ejercicios'], key=lambda x: x[0])]
-        plan['dias'].append(d)
-    for d in plan['dias']:
+        if d['nombre'].strip().lower().startswith('casa'):  # dias 'Casa · Superior: ...' van a la pestaña de entrenamiento en casa
+            d['nombre'] = d['nombre'].split('·', 1)[1].strip() if '·' in d['nombre'] else d['nombre'].strip()[4:].strip(' :-')
+            plan.setdefault('casa_dias', []).append(d)
+        else:
+            plan['dias'].append(d)
+    if plan.get('casa_dias'): plan['casa_material'] = MATERIAL_CASA
+    for d in plan['dias'] + plan.get('casa_dias', []):
         for it in d['ejercicios']:
             if it.get('alt') and it['alt'] not in g.EJ: sys.exit(f'Alternativa inexistente: {it["alt"]}')
             if not it.get('alt'): print('AVISO: sin alternativa en', it['id'], file=sys.stderr)
@@ -56,6 +62,11 @@ def main(planes, clientes, codigo, version=None):
     dest.mkdir(parents=True, exist_ok=True)
     if (dest / 'nutricion' / 'index.html').exists(): plan['nutricion'] = True  # enlace a la nutricion bajo el mismo link
     (dest / 'index.html').write_text(g.pagina(plan), encoding='utf-8')
+    if plan.get('casa_dias'):
+        (dest / 'casa').mkdir(exist_ok=True)
+        (dest / 'casa' / 'index.html').write_text(g.pagina(plan, casa=True), encoding='utf-8')
+    elif (dest / 'casa').exists():  # si ya no hay sesiones de casa, se borra la pagina vieja
+        import shutil; shutil.rmtree(dest / 'casa')
     print(json.dumps({'codigo': codigo, 'token': token, 'ruta': f'p/{token}/index.html', 'link': BASE + token + '/'}))
 
 if __name__ == '__main__':
