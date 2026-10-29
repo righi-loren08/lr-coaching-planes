@@ -38,6 +38,7 @@ def main():
         if not revision: sys.exit('Falta la fecha de la proxima revision.')
         pn = nutricion_desde_hoja.armar(nut, nombre, 'V' + version, revision)
         pn['casa'] = any(str(f[2]).strip().lower().startswith('casa') for f in filas)  # enlace a la pestaña de casa
+        pn['fuerza'] = any(str(f[2]).strip().lower().startswith('fuerza') for f in filas)
         avisos = nutricion_desde_hoja.validar(pn)
         for a in avisos: print('AVISO nutricion:', a, file=sys.stderr)
         nutricion_desde_hoja.escribir(pn, token)

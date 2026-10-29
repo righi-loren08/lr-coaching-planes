@@ -9,6 +9,7 @@ Si el cliente no tiene token en Clientes, crea uno nuevo. Imprime JSON con token
 import json, sys, secrets
 import generar as g
 
+FUERZA_INTRO = 'Bloque de 4 semanas para subir la fuerza: pocas repeticiones, cargas altas y descansos largos. Semana 1: calibrá las cargas con 3 repeticiones de reserva. Semanas 2 y 3: cuando llegues al tope de repeticiones en todas las series, sumá 2,5 a 5 kg. Semana 4: la última serie del ejercicio principal llevala a 1 de reserva y anotá el peso y las repeticiones. Descansá lo que dice la tarjeta: es parte del trabajo.'
 MATERIAL_CASA = 'una mesa robusta, una silla o banco, una mochila con peso, una toalla y botellas o garrafas con agua'
 BASE = 'https://righi-loren08.github.io/lr-coaching-planes/p/'
 
@@ -51,10 +52,14 @@ def main(planes, clientes, codigo, version=None):
         if d['nombre'].strip().lower().startswith('casa'):  # dias 'Casa · Superior: ...' van a la pestaña de entrenamiento en casa
             d['nombre'] = d['nombre'].split('·', 1)[1].strip() if '·' in d['nombre'] else d['nombre'].strip()[4:].strip(' :-')
             plan.setdefault('casa_dias', []).append(d)
+        elif d['nombre'].strip().lower().startswith('fuerza'):  # dias 'Fuerza · Martes: ...' van a la pestaña de fuerza
+            d['nombre'] = d['nombre'].split('·', 1)[1].strip() if '·' in d['nombre'] else d['nombre'].strip()[6:].strip(' :-')
+            plan.setdefault('fuerza_dias', []).append(d)
         else:
             plan['dias'].append(d)
     if plan.get('casa_dias'): plan['casa_material'] = MATERIAL_CASA
-    for d in plan['dias'] + plan.get('casa_dias', []):
+    if plan.get('fuerza_dias'): plan['fuerza_intro'] = FUERZA_INTRO
+    for d in plan['dias'] + plan.get('casa_dias', []) + plan.get('fuerza_dias', []):
         for it in d['ejercicios']:
             if it.get('alt') and it['alt'] not in g.EJ: sys.exit(f'Alternativa inexistente: {it["alt"]}')
             if not it.get('alt'): print('AVISO: sin alternativa en', it['id'], file=sys.stderr)
@@ -65,7 +70,12 @@ def main(planes, clientes, codigo, version=None):
     if plan.get('casa_dias'):
         (dest / 'casa').mkdir(exist_ok=True)
         (dest / 'casa' / 'index.html').write_text(g.pagina(plan, casa=True), encoding='utf-8')
-    elif (dest / 'casa').exists():  # si ya no hay sesiones de casa, se borra la pagina vieja
+    if plan.get('fuerza_dias'):
+        (dest / 'fuerza').mkdir(exist_ok=True)
+        (dest / 'fuerza' / 'index.html').write_text(g.pagina(plan, fuerza=True), encoding='utf-8')
+    elif (dest / 'fuerza').exists():
+        import shutil; shutil.rmtree(dest / 'fuerza')
+    if not plan.get('casa_dias') and (dest / 'casa').exists():  # si ya no hay sesiones de casa, se borra la pagina vieja
         import shutil; shutil.rmtree(dest / 'casa')
     print(json.dumps({'codigo': codigo, 'token': token, 'ruta': f'p/{token}/index.html', 'link': BASE + token + '/'}))
 

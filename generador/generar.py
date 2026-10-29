@@ -62,19 +62,21 @@ def tarjeta(i, it, casa=False):
 {nota}
 <details class="ex-d"><summary>Cómo se hace y video</summary><p class="why">{esc(e["por_que"])}</p>{cuerpo(e)}</details>{alt}</article>'''
 
-def navmods(activo, nut, casa, donde):
-    """Botones Entrenamiento | Nutricion | Casa. donde = 'gym', 'nut' o 'casa' (carpeta de la pagina actual)."""
-    ruta = {'gym': {'gym': '', 'nut': 'nutricion/', 'casa': 'casa/'}, 'nut': {'gym': '../', 'nut': '', 'casa': '../casa/'}, 'casa': {'gym': '../', 'nut': '../nutricion/', 'casa': ''}}[donde]
-    etq = {'gym': '🏋️ ' + ('Gimnasio' if casa else 'Entrenamiento'), 'nut': '🍽️ Nutrición', 'casa': '🏠 En casa'}
-    orden = ['gym'] + (['nut'] if nut else []) + (['casa'] if casa else [])
+def navmods(activo, nut, casa, donde, fuerza=False):
+    """Botones de modulos: Entrenamiento | Nutricion | Fuerza | Casa. donde = carpeta de la pagina actual ('gym','nut','casa','fuerza')."""
+    dest = {'gym': '', 'nut': 'nutricion/', 'fuerza': 'fuerza/', 'casa': 'casa/'}
+    pre = '' if donde == 'gym' else '../'
+    ruta = {k: ('' if k == donde else pre + v) for k, v in dest.items()}
+    etq = {'gym': '🏋️ ' + ('Hipertrofia' if fuerza else 'Gimnasio' if casa else 'Entrenamiento'), 'nut': '🍽️ Nutrición', 'fuerza': '💪 Fuerza', 'casa': '🏠 En casa'}
+    orden = ['gym'] + (['nut'] if nut else []) + (['fuerza'] if fuerza else []) + (['casa'] if casa else [])
     if len(orden) < 2: return ''
     b = ''.join(f'<span class="on">{etq[k]}</span>' if k == activo else f'<a href="{ruta[k]}">{etq[k]}</a>' for k in orden)
-    return f'<nav class="mods{" m3" if len(orden) == 3 else ""}" aria-label="Tu plan">{b}</nav>'
+    return f'<nav class="mods{" m3" if len(orden) >= 3 else ""}" aria-label="Tu plan">{b}</nav>'
 
-def pagina(plan, casa=False):
+def pagina(plan, casa=False, fuerza=False):
     out = []
     tabs = []
-    dias = plan['casa_dias'] if casa else plan['dias']
+    dias = plan['casa_dias'] if casa else plan['fuerza_dias'] if fuerza else plan['dias']
     for n, d in enumerate(dias):
         corto = d['nombre'].split(':')[0].strip()
         clave = ''.join(ch for ch in unicodedata.normalize('NFD', corto.lower()) if unicodedata.category(ch) != 'Mn')
@@ -91,9 +93,12 @@ def pagina(plan, casa=False):
     saludo = f'Hola, {esc(plan["nombre"])}. ' if plan.get('nombre') else ''
     aviso = f'<p class="aviso">{esc(plan["_aviso"])}</p>' if plan.get('_aviso') else ''
     tiene_casa = bool(plan.get('casa_dias'))
-    nut = navmods('casa' if casa else 'gym', plan.get('nutricion'), tiene_casa, 'casa' if casa else 'gym')
-    titulo = 'Tu entrenamiento en casa' if casa else 'Tu plan de entrenamiento'
+    tiene_fuerza = bool(plan.get('fuerza_dias'))
+    donde = 'casa' if casa else 'fuerza' if fuerza else 'gym'
+    nut = navmods(donde, plan.get('nutricion'), tiene_casa, donde, tiene_fuerza)
+    titulo = 'Tu entrenamiento en casa' if casa else 'Tu bloque de fuerza' if fuerza else 'Tu plan de hipertrofia' if tiene_fuerza else 'Tu plan de entrenamiento'
     intro = (f'<p class="sub">Usalo cuando no puedas ir al gimnasio: hacé la sesión de casa ese mismo día (la de tren superior si te perdés lunes o jueves; la de tren inferior si te perdés martes o viernes). No hace falta recuperar el día perdido.</p><p class="sub"><b>Necesitás:</b> {esc(plan["casa_material"])}.</p>' if casa and plan.get('casa_material') else '')
+    if fuerza and plan.get('fuerza_intro'): intro = f'<p class="sub">{esc(plan["fuerza_intro"])}</p>'
     final = f'<p class="sub">{esc(plan["nota_final"])}</p>' if plan.get('nota_final') else ''
     return f'''<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow"><title>{titulo}</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"><style>{CSS}</style></head><body><main>
