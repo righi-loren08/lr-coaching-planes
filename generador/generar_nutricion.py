@@ -39,7 +39,7 @@ def hora(c):
 
 def emoji(c):
     n = (c.get('corto') or c['nombre']).lower()
-    for k, e in (('pre', '🍌'), ('desayuno', '🍳'), ('media', '🍎'), ('colaci', '🍎'), ('almuerzo', '🍛'), ('merienda', '🥪'), ('cena', '🍽️'), ('club', '⚡'), ('gym', '⚡')):
+    for k, e in (('post', '🥤'), ('pre', '🍌'), ('desayuno', '🍳'), ('media', '🍎'), ('colaci', '🍎'), ('almuerzo', '🍛'), ('merienda', '🥪'), ('cena', '🍽️'), ('club', '⚡'), ('gym', '⚡')):
         if k in n: return e
     return '🍴'
 
@@ -123,11 +123,11 @@ if __name__ == '__main__':
         for o in c['opciones']:
             if o.get('img') and not (dest/o['img']).exists():
                 print('AVISO: falta la imagen', o['img'])
-    # Dia tipo: merienda siempre; el pre-entreno se suma solo los dias de entrenamiento
-    for sufijo, excluye in (('sin entrenar', 'Pre-entreno'), ('dia de entrenamiento', 'zzzzz')):
+    # Dia tipo: las comidas fijas siempre; el pre-entreno y el post-entreno (extras) se suman solo los dias de entrenamiento
+    for sufijo, excluye in (('sin entrenar', ('Pre-entreno', 'Post-entreno')), ('dia de entrenamiento', ('zzzzz',))):
         for k in (0, 1):
-            kc = sum(c['opciones'][k]['kcal'] for c in p['comidas'] if excluye not in c['nombre'])
-            pr = sum(c['opciones'][k]['prot'] for c in p['comidas'] if excluye not in c['nombre'])
+            kc = sum(c['opciones'][k]['kcal'] for c in p['comidas'] if not any(x in c['nombre'] for x in excluye))
+            pr = sum(c['opciones'][k]['prot'] for c in p['comidas'] if not any(x in c['nombre'] for x in excluye))
             ok = lo <= kc <= hi and plo <= pr <= phi
             print(f'Dia con la opcion {k+1} ({sufijo}): {kc} kcal, {pr} g proteina', 'OK' if ok else 'FUERA DE RANGO')
     dest.mkdir(parents=True, exist_ok=True)

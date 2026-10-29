@@ -59,10 +59,10 @@ def validar(p):
         if not com['nombre'] or any(not o['plato'] for o in com['opciones']): raise SystemExit('Nutricion: falta nombre o plato.')
     avisos = []
     lo, hi = (float(x.replace('.', '')) for x in p['calorias']); plo, phi = (float(x.replace('.', '')) for x in p['proteina'])
-    for suf, excluye in (('sin entrenar', 'Pre-entreno'), ('dia de entrenamiento', 'zzzzz')):
+    for suf, excluye in (('sin entrenar', ('Pre-entreno', 'Post-entreno')), ('dia de entrenamiento', ('zzzzz',))):
         for k in (0, 1):
-            kc = sum(c['opciones'][k]['kcal'] for c in p['comidas'] if excluye not in c['nombre'])
-            pr = sum(c['opciones'][k]['prot'] for c in p['comidas'] if excluye not in c['nombre'])
+            kc = sum(c['opciones'][k]['kcal'] for c in p['comidas'] if not any(x in c['nombre'] for x in excluye))
+            pr = sum(c['opciones'][k]['prot'] for c in p['comidas'] if not any(x in c['nombre'] for x in excluye))
             if not (lo <= kc <= hi and plo <= pr <= phi):
                 avisos.append(f'Dia con la opcion {k+1} ({suf}): {kc} kcal, {pr} g de proteina, fuera del rango')
     return avisos
