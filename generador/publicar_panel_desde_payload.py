@@ -37,6 +37,8 @@ def main():
     dest = G.AQUI.parent / 'p' / token / 'panel'
     dest.mkdir(parents=True, exist_ok=True)
     (dest / 'index.html').write_text(P.pagina(panel), encoding='utf-8')
+    import publicar_desde_payload as PP
+    PP.proteger(token, str(p.get('acceso', '')).strip(), 'panel', str(p.get('nonce', '')).strip())
 
 if __name__ == '__main__':
     main()

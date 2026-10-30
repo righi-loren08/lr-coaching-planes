@@ -43,6 +43,18 @@ def main():
         for a in avisos: print('AVISO nutricion:', a, file=sys.stderr)
         nutricion_desde_hoja.escribir(pn, token)
     desde_hoja.main(planes, clientes, codigo, version)
+    proteger(token, str(p.get('acceso', '')).strip(), '', str(p.get('nonce', '')).strip())
+
+def proteger(token, acceso, sub='', nonce=''):
+    """Si la hoja mando un codigo de acceso, cifra todas las paginas del cliente (portada con campo de codigo).
+    El codigo llega en el archivo del evento y nunca se imprime ni se guarda. Si el codigo no es valido, se corta antes de publicar."""
+    if not acceso: return
+    if not re.fullmatch(r'[A-Za-z0-9]{4,12}', acceso): sys.exit('El codigo de acceso no es valido (4 a 12 letras o numeros).')
+    import subprocess, pathlib
+    carpeta = pathlib.Path(__file__).resolve().parent.parent / 'p' / token / sub
+    r = subprocess.run(['node', str(pathlib.Path(__file__).resolve().parent / 'cifrar.js'), str(carpeta)],
+                       env={**os.environ, 'ACCESO': acceso, 'TOKEN': token, 'NONCE': nonce}, capture_output=True, text=True)
+    if r.returncode != 0: sys.exit('No se pudo proteger la pagina con el codigo.')
 
 if __name__ == '__main__':
     main()
