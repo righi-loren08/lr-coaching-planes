@@ -8,19 +8,24 @@ const fs = require('fs'), path = require('path'), crypto = require('crypto');
 const ITER = 300000, MARCA = '<!--lr-protegido-->';
 const NONCE = /^[a-z0-9]{6,24}$/.test(process.env.NONCE || '') ? process.env.NONCE : ''; // marca no secreta para que la hoja compruebe la publicacion
 
-function cifrar(html, acceso) {
-  const salt = crypto.randomBytes(16), iv = crypto.randomBytes(12);
+// La sal (que no es secreta) es fija por cliente: asi el navegador guarda la clave ya calculada y al pasar de una pagina a otra
+// no repite el calculo lento. El iv es nuevo en cada pagina.
+function salDe(token) { return crypto.createHash('sha256').update('lr-coaching:' + token).digest().subarray(0, 16); }
+
+function cifrar(html, acceso, salt) {
+  const iv = crypto.randomBytes(12);
   const clave = crypto.pbkdf2Sync(acceso, salt, ITER, 32, 'sha256');
   const c = crypto.createCipheriv('aes-256-gcm', clave, iv);
   const ct = Buffer.concat([c.update(html, 'utf8'), c.final(), c.getAuthTag()]);
-  return Buffer.concat([salt, iv, ct]).toString('base64');
+  return Buffer.concat([iv, ct]).toString('base64');
 }
 
-function portada(datos, token) {
+function portada(datos, token, salt) {
   return `<!doctype html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow"><title>LR Coaching</title>${MARCA}${NONCE ? '<!--lr-nonce:' + NONCE + '-->' : ''}
-<style>
+<script>try{if(localStorage.getItem('lrk-'+${JSON.stringify(token)}))document.documentElement.className='auto'}catch(e){}</script>
+<style>.auto main{visibility:hidden}
 :root{--bg:#f6f7f9;--tx:#16181d;--mu:#5b6270;--ca:#fff;--ac:#1a56db;--er:#b42318;--bo:#d6dae1}
 @media (prefers-color-scheme:dark){:root{--bg:#0f1115;--tx:#eef0f4;--mu:#9aa2b1;--ca:#181b22;--ac:#6ea0ff;--er:#ff8a80;--bo:#2b303b}}
 *{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;padding:16px}
@@ -40,28 +45,43 @@ small{display:block;margin-top:14px;color:var(--mu)}
 <noscript><p style="text-align:center">Necesitás activar JavaScript para ver tu plan.</p></noscript>
 <script>
 (function(){
-var D=${JSON.stringify(datos)},K='lrk-'+${JSON.stringify(token)},I=${ITER};
+var D=${JSON.stringify(datos)},SAL=${JSON.stringify(salt.toString('base64'))},K='lrk-'+${JSON.stringify(token)},I=${ITER};
 function b64(s){var r=atob(s),a=new Uint8Array(r.length);for(var i=0;i<r.length;i++)a[i]=r.charCodeAt(i);return a}
+function hex(u){return Array.prototype.map.call(u,function(x){return ('0'+x.toString(16)).slice(-2)}).join('')}
+function deHex(h){var a=new Uint8Array(h.length/2);for(var i=0;i<a.length;i++)a[i]=parseInt(h.substr(i*2,2),16);return a}
 function leer(){try{return localStorage.getItem(K)||''}catch(e){return ''}}
-function guardar(c){try{localStorage.setItem(K,c)}catch(e){}}
+function guardar(v){try{localStorage.setItem(K,v)}catch(e){}}
 function borrar(){try{localStorage.removeItem(K)}catch(e){}}
-async function abrir(codigo){
-  var raw=b64(D),salt=raw.slice(0,16),iv=raw.slice(16,28),ct=raw.slice(28);
+async function claveDeCodigo(codigo){
   var base=await crypto.subtle.importKey('raw',new TextEncoder().encode(codigo),'PBKDF2',false,['deriveKey']);
-  var key=await crypto.subtle.deriveKey({name:'PBKDF2',salt:salt,iterations:I,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['decrypt']);
-  var buf=await crypto.subtle.decrypt({name:'AES-GCM',iv:iv},key,ct);
+  return crypto.subtle.deriveKey({name:'PBKDF2',salt:b64(SAL),iterations:I,hash:'SHA-256'},base,{name:'AES-GCM',length:256},true,['decrypt']);
+}
+async function abrirCon(key){
+  var raw=b64(D),buf=await crypto.subtle.decrypt({name:'AES-GCM',iv:raw.slice(0,12)},key,raw.slice(12));
   return new TextDecoder().decode(buf);
 }
 function mostrar(html){document.open();document.write(html);document.close()}
 var f=document.getElementById('f'),c=document.getElementById('c'),b=document.getElementById('b'),e=document.getElementById('e');
-async function intentar(codigo,auto){
-  if(!window.crypto||!crypto.subtle){e.textContent='Tu navegador no puede abrir esta página. Probá con Chrome o Safari actualizado.';return}
-  b.disabled=true;e.textContent=auto?'':'Abriendo…';
-  try{var html=await abrir(codigo);guardar(codigo);mostrar(html)}
-  catch(x){b.disabled=false;if(auto)borrar();e.textContent=auto?'':'Código incorrecto. Probá de nuevo.';if(!auto)c.select()}
+function volver(msg){document.documentElement.className='';b.disabled=false;e.textContent=msg||''}
+async function auto(){
+  var g=leer();
+  try{
+    var key;
+    if(g.charAt(0)==='{'){key=await crypto.subtle.importKey('raw',deHex(JSON.parse(g).k),'AES-GCM',false,['decrypt'])}
+    else{key=await claveDeCodigo(g);guardar(JSON.stringify({k:hex(new Uint8Array(await crypto.subtle.exportKey('raw',key)))}))}
+    mostrar(await abrirCon(key));
+  }catch(x){borrar();volver('')}
 }
-f.addEventListener('submit',function(ev){ev.preventDefault();var v=c.value.trim();if(v)intentar(v,false)});
-var g=leer();if(g)intentar(g,true);
+async function intentar(codigo){
+  if(!window.crypto||!crypto.subtle){e.textContent='Tu navegador no puede abrir esta página. Probá con Chrome o Safari actualizado.';return}
+  b.disabled=true;e.textContent='Abriendo…';
+  try{
+    var key=await claveDeCodigo(codigo),html=await abrirCon(key);
+    guardar(JSON.stringify({k:hex(new Uint8Array(await crypto.subtle.exportKey('raw',key)))}));mostrar(html);
+  }catch(x){b.disabled=false;e.textContent='Código incorrecto. Probá de nuevo.';c.select()}
+}
+f.addEventListener('submit',function(ev){ev.preventDefault();var v=c.value.trim();if(v)intentar(v)});
+if(leer()&&window.crypto&&crypto.subtle){if(document.readyState==='complete')auto();else window.addEventListener('load',auto)}else volver('');
 })();
 </script></body></html>`;
 }
@@ -79,11 +99,12 @@ const carpeta = process.argv[2], acceso = process.env.ACCESO || '';
 if (!carpeta || !fs.existsSync(carpeta)) { console.error('Falta la carpeta.'); process.exit(2); }
 if (!/^[A-Za-z0-9]{4,12}$/.test(acceso)) { console.error('El codigo de acceso debe tener entre 4 y 12 letras o numeros.'); process.exit(2); }
 const token = process.env.TOKEN || path.basename(path.resolve(carpeta));
+const SAL = salDe(token);
 let n = 0;
 for (const f of recorrer(carpeta, [])) {
   const html = fs.readFileSync(f, 'utf8');
   if (html.includes(MARCA)) continue; // ya esta protegida: se regenera desde el origen, no se vuelve a cifrar
-  fs.writeFileSync(f, portada(cifrar(html, acceso), token));
+  fs.writeFileSync(f, portada(cifrar(html, acceso, SAL), token, SAL));
   n++;
 }
 console.log('Paginas protegidas: ' + n);
