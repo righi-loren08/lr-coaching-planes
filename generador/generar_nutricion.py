@@ -11,18 +11,13 @@ import json, sys, html, pathlib
 import generar as G
 
 esc = html.escape
-EXTRA = """.rango{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}.rango div{background:var(--soft);border-radius:8px;padding:10px;text-align:center}
-.rango b{display:block;font:700 1.15rem var(--mono)}.rango span{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
-.com h3{margin:0 0 4px;font-size:1.05rem}.opt{display:flex;gap:12px;align-items:flex-start;margin:12px 0 0;padding-top:12px;border-top:1px solid var(--line)}
-.opt:first-of-type{border-top:0}.opt img{width:132px;height:auto;border-radius:8px;flex:none;background:var(--soft)}.optt{min-width:0}.optl{font:700 .72rem/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
-.plato{margin:6px 0}.cifras{font:500 .8rem var(--mono);color:var(--muted)}ul.reglas,ul.reg{padding-left:20px;margin:8px 0}ul.reglas li,ul.reg li{margin:6px 0}
-@media(max-width:420px){.opt{flex-direction:column}.opt img{width:100%;max-width:220px}}
-.tabs.nut{grid-template-columns:repeat(auto-fit,minmax(78px,1fr))}.tabs.nut .tab{line-height:1.1;padding:4px 3px}.tabs.nut{position:static;grid-template-columns:repeat(3,1fr);gap:6px;padding:0;margin:0 0 12px}.tabs.nut .tab{min-height:62px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:.78rem}.tab .ti{font-size:1.4rem;line-height:1}
-.chead{display:flex;align-items:center;gap:12px;margin:0 0 10px}.chead .ico{font-size:2rem;line-height:1;background:var(--soft);border-radius:12px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;flex:none}.chead h3{margin:0}.chead small{color:var(--muted);font:500 .8rem var(--mono)}
-.idea{background:var(--soft);border-radius:10px;padding:10px 12px;margin:0 0 8px;font-size:.92rem}.com .sub{font-size:.85rem}
-.cifras b{color:var(--fg)}.op2{margin-top:10px;border-top:1px solid var(--line);padding-top:4px}.op2>summary{min-height:44px}.op2 .opt{border-top:0;margin-top:4px}
-.tl{list-style:none;margin:0;padding:0}.tl li{display:flex;gap:12px;position:relative;padding:0 0 14px}.tl li:not(:last-child)::before{content:'';position:absolute;left:19px;top:42px;bottom:2px;width:2px;background:var(--line)}.tl .td{flex:none;width:40px;height:40px;border-radius:50%;background:var(--soft);display:flex;align-items:center;justify-content:center;font-size:1.2rem}.tl b{display:inline}.tl small{color:var(--muted);font:500 .78rem var(--mono)}.tl p{margin:2px 0 0;font-size:.92rem}
-.rango b{font-size:1.02rem;white-space:nowrap}.rango i{font-style:normal;display:block;font-size:1.4rem;margin:0 0 2px}.reg li::marker{content:'✔ '}"""
+EXTRA = """.tabs.nut{position:static;grid-template-columns:repeat(3,minmax(0,1fr));padding:0;margin:0;gap:6px}.tabs.nut .tab{min-height:48px;border-radius:12px;font:600 .8rem/1.1 var(--body);text-align:center;padding:0 4px}.tabs.nut .tab.extra{background:transparent;border:1px dashed var(--accent)}.tabs.nut .tab .x2{font:500 .56rem var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--accent-2)}.tabs.nut .tab[aria-selected=true]{background:var(--fg);border:1px solid var(--fg);color:var(--bg)}.tabs.nut .tab[aria-selected=true] .x2{color:var(--bg)}
+.mh{display:flex;flex-direction:column;gap:4px}.mh small{font:500 .7rem var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding-left:16px}
+.opt{display:flex;flex-direction:column;gap:14px;padding:18px 16px}.optl{font:500 .7rem var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--accent-2)}.opt img{width:100%;max-width:320px;height:auto;border-radius:10px;background:var(--soft)}.plato{margin:0;font-size:1rem;line-height:1.55}
+.cifras{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--line);padding-top:14px}.cifras div{display:flex;flex-direction:column;gap:2px}.cifras div+div{padding-left:14px;border-left:1px solid var(--line)}.cifras b{font:700 1.75rem/1 var(--mono)}.cifras span{font:500 .62rem var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.op2>summary{min-height:48px;border-radius:12px;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font:600 .875rem var(--body)}.op2[open]>summary{margin-bottom:14px}
+.tl{list-style:none;margin:0;padding:0;counter-reset:t}.tl li{display:flex;gap:12px;position:relative;padding:0 0 14px;counter-increment:t}.tl li:not(:last-child)::before{content:'';position:absolute;left:19px;top:42px;bottom:2px;width:2px;background:var(--line)}.tl .td{flex:none;width:40px;height:40px;border-radius:50%;background:var(--soft);display:flex;align-items:center;justify-content:center;font:500 .85rem var(--mono);color:var(--accent-2)}.tl .td::before{content:counter(t)}.tl b{display:inline}.tl small{color:var(--muted);font:500 .78rem var(--mono)}.tl p{margin:2px 0 0;font-size:.92rem}
+ul.reglas,ul.reg{list-style:none;padding:0;margin:8px 0;display:flex;flex-direction:column;gap:10px}ul.reglas li,ul.reg li{padding-left:22px;position:relative}ul.reglas li::before,ul.reg li::before{content:'';position:absolute;left:2px;top:.55em;width:8px;height:8px;border-radius:50%;background:var(--accent)}"""
 
 ETIQ = ['Opción']
 import re, unicodedata
@@ -37,11 +32,10 @@ def hora(c):
     m = re.match(r'\s*(\d{1,2}):(\d{2})', c['nombre'])
     return str(int(m.group(1)) * 60 + int(m.group(2))) if m else ''
 
-def emoji(c):
+def es_extra(c):
     n = (c.get('corto') or c['nombre']).lower()
-    for k, e in (('post', '🥤'), ('pre', '🍌'), ('desayuno', '🍳'), ('media', '🍎'), ('colaci', '🍎'), ('almuerzo', '🍛'), ('merienda', '🥪'), ('cena', '🍽️'), ('club', '⚡'), ('gym', '⚡')):
-        if k in n: return e
-    return '🍴'
+    n = n.split('·')[-1].strip()
+    return n.startswith('pre') or n.startswith('post')
 
 NJS = """(function(){var ts=document.querySelectorAll('.tab');if(!ts.length)return;document.documentElement.classList.add('js');
 function show(id,tope){ts.forEach(function(t){t.setAttribute('aria-selected',t.dataset.t===id?'true':'false')});document.querySelectorAll('.dia').forEach(function(d){d.classList.toggle('on',d.id===id)});
@@ -52,61 +46,53 @@ ts.forEach(function(t){var x=t.dataset.h;if(!ok&&x!==''&&x!==undefined&&+x>=m-30
 if(h&&document.getElementById(h))ini=h;show(ini,false)})();"""
 def comida(c):
     hr, _, nm = c['nombre'].partition('·') if '·' in c['nombre'] else ('', '', c['nombre'])
-    enf = f'<p class="idea">💡 <b>La idea:</b> {esc(c["enfoque"])}</p>' if c.get('enfoque') else ''
-    nota = f'<p class="sub" style="margin:0 0 8px">{esc(c["nota"])}</p>' if c.get('nota') else ''
+    enf = f'<div class="callout"><span class="lab">La idea</span>{esc(c["enfoque"])}</div>' if c.get('enfoque') else ''
+    nota = f'<p class="sub">{esc(c["nota"])}</p>' if c.get('nota') else ''
     ops = []
     for i, o in enumerate(c['opciones'], 1):
         img = f'<img src="{esc(o["img"])}" alt="Ejemplo del plato" loading="lazy">' if o.get('img') else ''
-        ops.append(f'<div class="opt">{img}<div class="optt"><span class="optl">{ETIQ[0]} {i}</span><p class="plato">{esc(o["plato"])}</p><span class="cifras">🔥 <b>{o["kcal"]}</b> kcal · 💪 <b>{o["prot"]}</b> g de proteína</span></div></div>')
+        ops.append(f'<div class="card opt"><span class="optl">{ETIQ[0]} {i}</span>{img}<p class="plato">{esc(o["plato"])}</p><div class="cifras"><div><b>{o["kcal"]}</b><span>kcal</span></div><div><b>{o["prot"]} g</b><span>de proteína</span></div></div></div>')
     resto = f'<details class="op2"><summary>Ver otra opción</summary>{"".join(ops[1:])}</details>' if len(ops) > 1 else ''
-    cab = f'<div class="chead"><span class="ico">{emoji(c)}</span><div><h3>{esc(nm.strip())}</h3>' + (f'<small>🕒 {esc(hr.strip())}</small>' if hr.strip() else '') + '</div></div>'
-    return f'<article class="card com">{cab}{enf}{nota}{ops[0]}{resto}</article>'
-
-def emoji_momento(m):
-    t = m.lower()
-    for k, e in (('desayuno', '🍳'), ('justo', '⏱️'), ('antes', '⏱️'), ('durante', '💧'), ('despu', '🍚'), ('resto', '🌙')):
-        if k in t: return e
-    return '▫️'
+    cab = f'<div class="mh"><h2>{esc(nm.strip())}</h2>' + (f'<small>{esc(hr.strip())}</small>' if hr.strip() else '') + '</div>'
+    return f'{cab}{enf}{nota}{ops[0]}{resto}'
 
 def guia(g):
     filas = []
     for i in g['items']:
         tit, _, det = i['momento'].partition(' · ')
         d = f' <small>{esc(det)}</small>' if det else ''
-        filas.append(f'<li><span class="td">{emoji_momento(tit)}</span><div><b>{esc(tit)}</b>{d}<p>{esc(i["texto"])}</p></div></li>')
+        filas.append(f'<li><span class="td"></span><div><b>{esc(tit)}</b>{d}<p>{esc(i["texto"])}</p></div></li>')
     intro = f'<p class="sub" style="margin:0 0 10px">{esc(g["intro"])}</p>' if g.get('intro') else ''
     return f'<h2>{esc(g["titulo"])}</h2><section class="card">{intro}<ol class="tl">{"".join(filas)}</ol></section>'
 
 def pagina(p):
-    saludo = f'Hola, {esc(p["nombre"])}. ' if p.get('nombre') else ''
     cal0, cal1 = p['calorias']; pr0, pr1 = p['proteina']
     reglas = ''.join(f'<li>{esc(r)}</li>' for r in p['reglas'])
     reg = ''.join(f'<li>{esc(r)}</li>' for r in p['registrar'])
     aviso = f'<p class="aviso">{esc(p["_aviso"])}</p>' if p.get('_aviso') else ''
-    tabs, paneles = [], []
+    fijas, extras, paneles = [], [], []
     for n, c in enumerate(p['comidas']):
-        tabs.append(f'<button type="button" class="tab" role="tab" data-t="m{n}" data-h="{hora(c)}" aria-selected="false"><span class="ti">{emoji(c)}</span>{esc(corto(c))}</button>')
+        ex = es_extra(c)
+        t = f'<button type="button" class="tab{" extra" if ex else ""}" role="tab" data-t="m{n}" data-h="{hora(c)}" aria-selected="false"><span>{esc(corto(c))}</span>{"<span class=x2>Extra</span>" if ex else ""}</button>'
+        (extras if ex else fijas).append(t)
         paneles.append(f'<div class="dia" id="m{n}" role="tabpanel">{comida(c)}</div>')
     if p.get('guia'):
-        tabs.append(f'<button type="button" class="tab" role="tab" data-t="mg" data-h="" aria-selected="false"><span class="ti">⚽</span>{esc(p["guia"].get("corto") or p["guia"]["titulo"])}</button>')
+        fijas.append(f'<button type="button" class="tab" role="tab" data-t="mg" data-h="" aria-selected="false"><span>{esc(p["guia"].get("corto") or p["guia"]["titulo"])}</span></button>')
         paneles.append(f'<div class="dia" id="mg" role="tabpanel">{guia(p["guia"])}</div>')
-    tabs.append('<button type="button" class="tab" role="tab" data-t="mr" data-h="" aria-selected="false"><span class="ti">📋</span>Reglas</button>')
+    fijas.append('<button type="button" class="tab" role="tab" data-t="mr" data-h="" aria-selected="false"><span>Reglas</span></button>')
     paneles.append(f'<div class="dia" id="mr" role="tabpanel"><h2>Reglas</h2><section class="card"><ul class="reglas">{reglas}</ul></section></div>')
-    nav = f'<nav class="tabs nut" role="tablist" aria-label="Comidas">{"".join(tabs)}</nav>'
+    nav = f'<nav class="tabs nut" role="tablist" aria-label="Comidas">{"".join(fijas + extras)}</nav>'
+    mods = G.navmods("nut", True, p.get("casa"), "nut", p.get("fuerza"))
     return f'''<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow"><title>Tu plan de nutrición</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"><style>{G.CSS}{EXTRA}</style></head><body><main>
-<h1>{saludo}Tu plan de nutrición ({esc(p["version"])})</h1><p class="sub">Primera revisión: {esc(p["revision"])}.</p>{aviso}
-{G.navmods("nut", True, p.get("casa"), "nut", p.get("fuerza"))}
-<h2>Tu punto de partida</h2>
-<section class="card"><p style="margin:0">Para {esc(p["objetivo"])}, te propongo arrancar con:</p>
-<div class="rango"><div><i>🔥</i><b>{cal0} a {cal1}</b><span>Calorías por día</span></div><div><i>💪</i><b>{pr0} a {pr1} g</b><span>Proteína por día</span></div></div>
-<p class="sub" style="margin:0">Es un punto de partida: lo ajustamos con tu peso y cómo te sentís. No hace falta contar nada, los platos ya están pensados para que llegues.</p></section>
-<h2>Tus comidas</h2>
+{G.cabecera(p, mods, p["version"])}{aviso}
+<div class="hero"><div class="eyebrow">Tu plan de comidas</div><h1>{G.resaltar(p["objetivo"])}</h1>
+<div class="stats"><div><b>{cal0}–{cal1}</b><span>Calorías por día</span></div><div><b>{pr0}–{pr1} g</b><span>Proteína por día</span></div></div></div>
+<p class="sub">Es un punto de partida: lo ajustamos con tu peso y cómo te sentís. No hace falta contar nada, los platos ya están pensados para que llegues.</p>
 {nav}{"".join(paneles)}
 <p class="sub">Las cantidades son aproximadas y las fotos son solo de ejemplo.</p>
-<h2>Qué registrar</h2><section class="card"><p style="margin:0">Esta semana anotá:</p><ul class="reg">{reg}</ul><p class="sub" style="margin:0">Eso nos dice si el punto de partida está bien o hay que ajustarlo. Un día suelto no cambia nada: miramos la tendencia.</p></section>
-<h2>Próximo paso</h2><p>Nos vemos en la revisión el {esc(p["revision"])}. Si algo no te cierra antes, avisame.</p>
-<p class="pie">Si algo no se ve o no se entiende, avisame por el chat.</p>
+<h2>Qué registrar</h2><section class="card"><p style="margin:0">Esta semana anotá:</p><ul class="reg">{reg}</ul><p class="sub">Eso nos dice si el punto de partida está bien o hay que ajustarlo. Un día suelto no cambia nada: miramos la tendencia.</p></section>
+<footer class="foot"><span class="l">Próxima revisión</span><b>{esc(p["revision"])}</b><p class="pie">Si algo no te cierra antes, avisame. Si algo no se ve o no se entiende, avisame por el chat.</p></footer>
 </main><script>{NJS}</script></body></html>'''
 
 if __name__ == '__main__':
